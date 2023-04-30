@@ -1,0 +1,199 @@
+{% extends 'greener_Base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+
+<style>
+  #menu {
+    width: 50px;
+  }
+
+  #menu-text {
+    font-family: 'Open Sans';
+    font-size: 20px;
+    font-weight: bolder;
+  }
+
+  .card-text {
+    font-family: 'Open Sans';
+    font-size: 0.8em;
+  }
+
+  h3 {
+    color: #BEDD00;
+  }
+
+  .quantities:disabled {
+      background-color: #fff; /* or transparent */
+      opacity: 1;
+  }
+
+
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+<div class="d-flex justify-content-start align-items-center" style="padding-left:10px; padding-top:10px;">
+  <div><img id="menu" data-bs-toggle="offcanvas" href="#greener-menu" src="{% static 'images/menu-logo.svg' %}"></div>
+  <div class="ms-2" id="menu-text">Menu</div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="greener-menu" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="nav flex-column d-flex justify-content-center align-items-center">
+      <a class="nav-link" href="{% url 'greenerHome' %}">Home</a>
+      <a class="nav-link" href="#">View History</a>
+      <a class="nav-link" href="{% url 'greenerLogin' %}">Logout</a>
+    </nav>
+  </div>
+</div>
+
+<!--show compost items-->
+<div class="container">
+  <div class="row d-flex justify-content-center align-items-center text-center">
+    <h3 style="margin-bottom:50px; margin-top:50px;">Compost items</h3>
+  </div>
+  <form name="qf" id="quantity-form">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-6" id="composts-container">
+      {% for compost in composts %}
+      <div class="col mb-4">
+        <div class="card">
+          <img src="{{ compost.CompostImage.url }}" class="card-img-top w-50 mx-auto d-block" alt="...">
+          <div class="card-body">
+            <p class="card-text">{{ compost.CompostName }}</p>
+
+            <div class="form-floating mb-3 quantity">
+              <input type="text" class="form-control {{ compost.CompostType }}" id="{{ compost.CompostName }}" value="0" onfocus="if(this.value=='0') this.value='';">
+              <label for="{{ compost.CompostName }}">Weight(Kg)</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+      
+ 
+
+  <div class="row justify-content-center align-items-center" style="display:none" id="categorize-composts">
+
+<!--show materials & weight + set date-->
+  <div class="col-6 col-sm-12">
+    <div class="input-group input-group-lg mb-3">
+      <span class="input-group-text" >Manure</span>
+      <input type="text" class="form-control quantities" id="animal-manure-quantities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      <span class="input-group-text">Kg</span>
+    </div>
+    <div class="input-group input-group-lg mb-3">
+      <span class="input-group-text">Brown Material</span>
+      <input type="text" class="form-control quantities" id="plant-based-fertilizers-quantities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      <span class="input-group-text">Kg</span>
+    </div>
+    <div class="input-group input-group-lg mb-3">
+      <span class="input-group-text">Green Material</span>
+      <input type="text" class="form-control quantities" id="biodegradable-fertilizers-qauntities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      <span class="input-group-text">Kg</span>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="my-date-picker" class="form-control" placeholder="Select Date Range">
+      <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+    </div>
+
+    <div class="col d-flex justify-content-center align-items-center">
+      <button type="submit" class="btn btn-outline-primary">Submit</button>
+    </div>
+  </div>
+
+  </div>
+
+    <div class="row">
+
+      <div class="col d-flex justify-content-center align-items-center">
+        <button type="button" class="btn btn-outline-primary" id="calculate-quantity">Next</button>
+      </div>
+    </div>
+    
+
+  </form>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+//get id
+  const NextPickDateBtn = document.getElementById('calculate-quantity');
+  const CompostsContainer = document.getElementById('composts-container');
+  const CategorizeComposts = document.getElementById('categorize-composts');
+
+
+  let AnimalManureElements = document.querySelectorAll('.AnimalManure');
+  let BiodegradableFertilizersElements = document.querySelectorAll('.BiodegradableFertilizers');
+  let PlantFertilizersElements = document.querySelectorAll('.PlantFertilizers');
+  
+  AnimalmanureField = document.getElementById('animal-manure-quantities');
+  BiodegradableFertilizersField = document.getElementById('biodegradable-fertilizers-qauntities');
+  PlantFertilizersField = document.getElementById('plant-based-fertilizers-quantities')
+
+  
+
+// calculate weight
+  NextPickDateBtn.addEventListener('click', function() {
+    CompostsContainer.style.display = 'none';
+    CategorizeComposts.style.display = 'flex';
+
+    let AnimalManureQuantities = 0;
+    let BiodegradableFertilizersQuantities = 0;
+    let PlantFertilizersQuantities = 0;
+    
+
+//calculate manure weight
+    for (let i = 0; i < AnimalManureElements.length; i++) {
+      let value = parseFloat(AnimalManureElements[i].value);
+      if (!isNaN(value)) {
+        AnimalManureQuantities += value;
+      }
+    }
+    AnimalmanureField.value = parseFloat(AnimalManureQuantities);
+
+//calculate green material weight
+    for (let i = 0; i < BiodegradableFertilizersElements.length; i++) {
+      let value = parseFloat(BiodegradableFertilizersElements[i].value);
+      if (!isNaN(value)) {
+        BiodegradableFertilizersQuantities += value;
+      }
+    }
+    BiodegradableFertilizersField.value = parseFloat(BiodegradableFertilizersQuantities);
+
+//calculate brown material weight
+    for (let i = 0; i < PlantFertilizersElements.length; i++) {
+      let value = parseFloat(PlantFertilizersElements[i].value);
+      if (!isNaN(value)) {
+        PlantFertilizersQuantities += value;
+      }
+    }
+    PlantFertilizersField.value = parseFloat(PlantFertilizersQuantities);
+
+});
+
+
+  flatpickr("#my-date-picker", {
+    mode: "range",
+    dateFormat: "d-m-Y",
+    minDate: "today",
+    maxDate: "31-12-2025",
+    icon: '<i class="bi bi-calendar"></i>'
+  });
+
+
+</script>
+
+{% endblock %}

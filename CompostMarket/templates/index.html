@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<style>
+
+
+body {
+  background-image: url('{% static "images/index-bg.jpg" %}');
+}
+
+.navbar {
+  color: #B6A885;
+  min-height: 15vh;
+}
+
+.container-fluid {
+  background-color: #B6A885;
+}
+
+.container-fluid .navbar-brand img
+{
+  background-color: black;
+  width: 56.54px;
+  height: 83.35px;
+  margin-left: 50px;
+}
+
+#app-name {
+  color: white;
+  margin-left: 20px;
+  font-size: 24px;
+}
+
+.nav-link {
+  margin-right: 75px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px;
+  color: white;
+}
+
+.About-us {
+  display: inline-block;
+  color: white;
+  margin-left: 3vw;
+  margin-top: 19vh;
+}
+
+.About-us h1{
+  font-weight: bold;
+  font-size: 36px;
+}
+
+.About-us p {
+  text-align: justify;
+  width: 612px;
+  height: 264px;
+  font-size: 20px;
+  font-family: 'Open Sans', sans-serif;
+  
+}
+
+.vertical-line {
+  position: absolute;
+  display: inline-block;
+  border-left: 1px solid white;
+  width: 2px;
+  height: 80vh;
+  margin-left: 30px;
+  vertical-align: middle;
+}
+
+.auth-links {
+  margin-left: 3vw;
+  margin-top: 50px;
+  line-height: 85px;
+  font-size: 20px;
+
+}
+
+.auth-links a:nth-child(1) {
+  display: inline-block;
+  text-decoration: none;
+  text-align:center;
+  width: 287px;
+  height: 85px;
+  color: #FFF;
+  font-family: 'Open Sans';
+  background: #B6A885;
+  border: 1px solid #FFFFFF;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.auth-links a:nth-child(2) {
+  display: inline-block;
+  text-decoration: none;
+  text-align:center;
+  width: 287px;
+  height: 85px;
+  color: #FFF;
+  font-family: 'Open Sans';
+  border: 1px solid #FFFFFF;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  margin-left: 20px;
+}
+
+
+
+
+
+</style>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="{%static '/images/COMPOSTY-LOGO.svg' %}" alt="Logo" width="30" height="24"
+        class="d-inline-block align-text-middle">
+      <span id="app-name">COMPOSTY</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="#">Home</a>
+        <a class="nav-link" href="#">Services</a>
+        <a class="nav-link" href="#">Contact</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Login
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'greenerLogin' %}">Login as greener</a></li>
+            <li><a class="dropdown-item" href="{% url 'composterLogin' %}">Login as composter</a></li>
+          </ul>
+        </li>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="section">
+  <div class="About-us">
+    <h1>ABOUT US</h1>
+    <p>Composter Market is a platform that connects green waste producers with composters, helping to create a more sustainable and circular economy. We offer a streamlined solution for businesses and individuals to sell their compostable waste, such as food scraps and yard trimmings, to local composters who transform the waste into nutrient-rich soil amendments.</p>
+  </div>
+
+  <div class="vertical-line"></div>
+
+  <div class="auth-links">
+    <a href="{% url 'greenerSignup' %}">Signup as a greener</a>
+    <a href="{% url 'composterSignup' %}">Signup as a composter</a>
+
+    
+
+  </div>
+</div>
+{% endblock %}

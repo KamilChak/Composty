@@ -1,0 +1,374 @@
+{% extends 'greener_Base.html' %}
+
+{% load static %}
+
+
+{% block title %}Home{% endblock %}
+
+
+
+
+{% block content %}
+
+
+<style>
+
+    #left-paper{
+        background-color: #B6A885;
+    }
+
+    #left-paper h1 {
+        font-family: 'Open Sans';
+        font-size: 48px;
+        color: white;
+    }
+
+    #h1-greener-word {
+        color: #E0FF89;
+    }
+    
+    #logo {
+        color: #B6A885;
+        width: 48px;
+    }
+
+    #greener-form {
+        width: 30vw;
+    }
+
+    .form-label {
+        font-size: 24px;
+        font-family: 'Lato';
+        color: #7E7E7E;
+    }
+    
+    .form-control {
+        height: 56px;
+        border-radius: 0px;
+    }
+
+    #c-desc, #s-desc {
+        font-size: 24px;
+        color:#8B8B8B ;
+    }
+
+    #s-desc {
+        margin-bottom: 32px;
+        margin-top: 0px;
+    }
+
+    .arrows {
+        margin-top: 16px;
+    }
+
+    #next-pick-location, #hidden-arrow, #go-back-fill-form, #next-pick-composter, #go-back-pick-location {
+        width: 64px;
+        margin:1vw;
+    }
+
+    #hidden-arrow {
+        visibility: hidden;
+    }
+
+
+    #submit-button {
+        font-family: 'Open Sans';
+        color: white;
+        border: 0;
+        width: 200px;
+        height: 60px;
+        background: #20E200;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+    }
+
+</style>
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+<div class="container-fluid">
+
+    <div class="row" style="height : 100vh">
+        <div class="col-4 d-flex align-items-center justify-content-center" id="left-paper">
+            <h1 class="mb-0"><span id="h1-greener-word">GREENER</span> SIGNUP PAGE</h1>
+          </div>
+
+
+    <div class="col-8 d-flex align-items-center justify-content-center">
+
+
+
+        <form action="" id="greener-form" class="row g-3 mb-0" method="POST">
+            {% csrf_token %}
+            <div class="col-12 d-flex justify-content-center align-items-center"><img  id="logo" src="{% static '/images/leaf.svg' %}" ></div>
+            <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Create an account</div>
+            <div class="col-12 d-flex justify-content-center align-items-center" id="s-desc">Signup to get started with an account</div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.FirstName.FirstName }}" class="form-label">First Name</label>
+                {{ form.FirstName }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.LastName.LastName }}" class="form-label">Last Name</label>
+                {{ form.LastName }}
+            </div>
+            <div class="col-12">
+                <label for="{{ form.Email.Email }}" class="form-label">Email</label>
+                {{ form.Email }}
+            </div>
+            <div class="col-12">
+                <label for="{{ form.password.password }}" class="form-label">Password</label>
+                {{ form.password }}
+            </div>
+            <div class="col-12">
+                <label for="{{ form.PhoneNumber.PhoneNumber }}" class="form-label">Phone Number</label>
+                {{ form.PhoneNumber }}
+            </div>
+                {{ form.Location }}
+                {{ form.composter }}
+
+
+            <div class="col-12  d-flex justify-content-center align-items-center">
+                <div class="arrows">
+                <img  id="hidden-arrow" class="arrow" src="{% static 'images/arrow-left-square-fill-Greener.svg' %}">
+                <img  id="next-pick-location" class="arrow" src="{% static 'images/arrow-right-square-fill-Greener.svg' %}">
+                </div>
+            </div>
+        </form>
+
+
+        <!-- Map page -->
+<div id="pick-location-map" style="display: none; width:40vw; border-radius:25px">
+    <div class="col-12 d-flex justify-content-center align-items-center"><img  id="logo" src="{% static '/images/leaf.svg' %}" ></div>
+            <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Create an account</div>
+            <div class="col-12 d-flex justify-content-center align-items-center" id="s-desc">Signup to get started with an account</div>
+            <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Pick location</div>
+    <div id="map1" style="height: 450px;"></div>
+    <div class="col-12  d-flex justify-content-center align-items-center">
+        <div class="arrows">
+        <img  id="go-back-fill-form" class="arrow" src="{% static 'images/arrow-left-square-fill-Greener.svg' %}">
+        <img  id="next-pick-composter" class="arrow" src="{% static 'images/arrow-right-square-fill-Greener.svg' %}">
+        </div>
+    </div>
+</div>
+
+
+
+<div id="pick-composter-map" style="display: none; width:40vw; border-radius:25px">
+    <div class="col-12 d-flex justify-content-center align-items-center"><img  id="logo" src="{% static '/images/leaf.svg' %}" ></div>
+    <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Create an account</div>
+    <div class="col-12 d-flex justify-content-center align-items-center" id="s-desc">Signup to get started with an account</div>
+    <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Pick location</div>
+    <div id="map2" style="height: 450px;"></div>
+    <div class="col-12  d-flex justify-content-center align-items-center">
+        <div class="arrows">
+            <img id="go-back-pick-location" class="arrow" src="{% static 'images/arrow-left-square-fill-Greener.svg' %}">
+            <button id="submit-button" type="submit" form="greener-form">Submit</button>
+        </div>
+    </div>
+    
+</div>
+
+
+
+    </div>
+</div>
+</div>
+
+
+
+
+
+
+<script>
+
+
+
+    var form = document.getElementById('greener-form');
+    var nextPickLocationButton = document.getElementById('next-pick-location');
+    var pickLocationMap = document.getElementById('pick-location-map');
+    var goBackFillFormButton = document.getElementById('go-back-fill-form');
+    var nextPickComposterButton = document.getElementById('next-pick-composter');
+    var pickComposterMap = document.getElementById('pick-composter-map');
+    var goBackPickLocationButton = document.getElementById('go-back-pick-location');
+    var submitGreenerForm = document.getElementById('submit-button');
+
+
+
+    nextPickLocationButton.addEventListener('click', function() {
+        // Hide the form and show the pick location map page
+        form.style.display = 'none';
+        pickLocationMap.style.display = 'block';
+        map1.invalidateSize();
+    });
+
+    goBackFillFormButton.addEventListener('click', function() {
+        // Show the form and hide the pick location map page
+        pickLocationMap.style.display = 'none';
+        form.style.display = 'flex';
+    });
+
+    goBackPickLocationButton.addEventListener('click', function() {
+        pickComposterMap.style.display= 'none';
+        pickLocationMap.style.display = 'block';
+
+    });
+
+    nextPickComposterButton.addEventListener('click', function() {
+        // Hide the pick location map and show the pick composter map page
+        pickLocationMap.style.display = 'none';
+        pickComposterMap.style.display = 'block';
+        map2.invalidateSize();
+        getClosestComposters()
+    });
+
+    /*---------------------LEAFLET API  FOR PICKING LOCATION---------------------------------*/
+
+
+    var map1 = L.map('map1', {
+        doubleClickZoom: false
+      }).setView([51.505, -0.09], 13);
+      
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map1);
+      
+
+
+    var marker;
+
+    function addMarker(latlng) {
+        if (marker) {
+            map1.removeLayer(marker);
+            marker = null;
+        }
+        marker = L.marker(latlng, { draggable: true,
+        
+            icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            })
+        
+        }).addTo(map1);
+        marker.on('dragend', function(e) {
+            updateLocationField(marker.getLatLng());
+        });
+        marker.on('dblclick', function(e) {
+            map1.removeLayer(marker);
+            marker = null;
+            updateLocationField(null);
+        });
+        updateLocationField(latlng);
+    }
+
+    //Print lat-lng in a Location form in format of POINT(x x)
+    function updateLocationField(latlng) {
+        var locationField = document.getElementById('location');
+        if (latlng) {
+            locationField.value = 'POINT(' + latlng.lng + ' ' + latlng.lat + ')';
+        } else {
+            locationField.value = '';
+        }
+    }
+
+    //Calling add marker function
+    map1.on('dblclick', function(e) {
+        addMarker(e.latlng);
+    });
+
+
+     /*---------------------LEAFLET API  FOR PICKING COMPOSTER---------------------------------*/
+
+    var map2 = L.map('map2', {
+        doubleClickZoom: false
+    }).setView([51.505, -0.09], 13);
+      
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map2);
+      
+
+
+
+    /*-----------------------Closest COmposters API ---------------*/
+
+    let userLocationMarker;
+    let markers = [];
+
+    function getClosestComposters() {
+        // User location here is in format WKT 'POINT (x y)'
+        let URLUserLocation = document.getElementById('location').value;
+    
+        // Remove the user location marker if it exists
+        if (userLocationMarker) {
+            userLocationMarker.remove();
+        }
+    
+        // Remove all composting site markers
+        markers.forEach(marker => marker.remove());
+        markers = [];
+    
+        // Create marker for user location
+        userLocationMarker = L.marker(parseLatLng(URLUserLocation), {
+            icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            })
+        }).addTo(map2);
+        
+    
+        fetch(`/Greener/get_closest_composters/?UserLocation=${URLUserLocation}`)
+            .then(response => response.json())
+            .then(data => {
+                // Handle the returned data here
+    
+                console.log(data.closest_composters);
+    
+                // Add markers to map for each composting site
+                data.closest_composters.forEach(composter => {
+                    let lat = parseFloat(composter.LocationY);
+                    let lng = parseFloat(composter.LocationX);
+                    let name = composter.OrganizationName;
+                    let community = composter.CommunityName;
+                    let distance = composter.distance.toFixed(2);
+                    let composterID = composter.id;
+    
+                    let marker = L.marker([lat, lng]).addTo(map2);
+                    marker.bindPopup(`<b>Organization name: ${name}</b><br>Community name: ${community}<br>Distance: ${distance} m`);
+
+                    marker.on('click', () => {
+                        document.getElementById('composter').value = composterID;
+
+                    });
+
+
+                    markers.push(marker);
+
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+    
+    function parseLatLng(wktPoint) {
+        // Parse the WKT point string to extract the coordinates
+        let match = wktPoint.match(/\((.*?)\)/);
+        let coords = match[1].split(' ');
+        let lat = parseFloat(coords[1]);
+        let lng = parseFloat(coords[0]);
+        return [lat, lng];
+    }
+
+</script>
+
+{% endblock %}

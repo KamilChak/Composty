@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Greener
+from .models import Greener, Offer
 
 
 class GreenerAdmin(UserAdmin):
@@ -23,3 +23,7 @@ class GreenerAdmin(UserAdmin):
 
 
 admin.site.register(Greener, GreenerAdmin)
+
+@admin.register(Offer)
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ('id', 'sender', 'manure', 'brown_material', 'green_material', 'date_range_start', 'date_range_end')

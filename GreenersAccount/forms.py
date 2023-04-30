@@ -51,9 +51,9 @@ class GreenerLoginForm(forms.Form):
     
 
 
-class CompostingForm(forms.Form):
-    green_material = forms.FloatField(label='Green Material')
-    brown_material = forms.FloatField(label='Brown Material')
-    manure = forms.FloatField(label='Manure')
-    min_date = forms.DateField(widget=forms.HiddenInput())
-    max_date = forms.DateField(widget=forms.HiddenInput())
+class CompostOfferForm(forms.Form):
+    manure = forms.FloatField(label="Animal Manure", required=True,widget=forms.TextInput(attrs={'class': 'form-control quantities', 'aria-label': 'Sizing example input', 'aria-describedby': 'inputGroup-sizing-lg'}))
+    green_material = forms.FloatField(label="Green Material", required=True,widget=forms.TextInput(attrs={'class': 'form-control quantities', 'aria-label': 'Sizing example input', 'aria-describedby': 'inputGroup-sizing-lg'}))
+    brown_material = forms.FloatField(label="Brown Material", required=True,widget=forms.TextInput(attrs={'class': 'form-control quantities', 'aria-label': 'Sizing example input', 'aria-describedby': 'inputGroup-sizing-lg'}))
+    date_range = forms.CharField(label="Date Range", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Select Date Range'}))
+

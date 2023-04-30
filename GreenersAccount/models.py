@@ -40,6 +40,18 @@ class Greener(AbstractBaseUser, PermissionsMixin):
     objects = GreenerManager()
 
 
+class Offer(models.Model):
+    sender = models.ForeignKey(Greener, on_delete=models.CASCADE)
+    manure = models.FloatField()
+    brown_material = models.FloatField()
+    green_material = models.FloatField()
+    date_range_start = models.DateField()
+    date_range_end = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.username}'s Compost Offer"
+
+
 
 
 

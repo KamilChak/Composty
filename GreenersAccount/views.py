@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .forms import GreenerForm, GreenerLoginForm
-from .models import Greener
+from .forms import CompostOfferForm, GreenerForm, GreenerLoginForm
+from .models import Greener, Offer
 from CompostersAccount.models import Composter
 from django.http import JsonResponse
 from django.contrib.gis.geos import Point
@@ -8,6 +8,7 @@ from django.contrib.gis.db.models.functions import Distance
 from CompostersAccount.models import Composter
 from django.contrib.gis.geos import GEOSGeometry
 from CompostItem.models import Compost
+from django.views.decorators.csrf import csrf_exempt
 
 #libraries for auth
 from django.contrib.auth.hashers import make_password
@@ -112,8 +113,24 @@ def getClosestComposters(request):
 
 @login_required
 def compostOffer(request):
+
+    if request.method == 'POST':
+        form = CompostOfferForm(request.POST)
+        if form.is_valid():
+            manure = form.cleaned_data['manure']
+            brown_material = form.cleaned_data['brown_material']
+            green_material = form.cleaned_data['green_material']
+            start_date = form.cleaned_data['date_range'].split(' to ')[0]
+            end_date = form.cleaned_data['date_range'].split(' to ')[1]
+            offer = Offer(sender=request.user,manure=manure, brown_material=brown_material, green_material=green_material, date_range_start=start_date, date_range_end=end_date)
+            offer.save()
+            return redirect('greenerHome')
+    else:
+        form = CompostOfferForm()
+
     composts = Compost.objects.all()
-    context = {'composts': composts}
+    context = {'composts': composts,
+               'form': form}
     return render(request, 'Compost_offer.html', context)
 
 

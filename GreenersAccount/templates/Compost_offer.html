@@ -61,7 +61,8 @@
   <div class="row d-flex justify-content-center align-items-center text-center">
     <h3 style="margin-bottom:50px; margin-top:50px;">Compost items</h3>
   </div>
-  <form name="qf" id="quantity-form">
+  <form name="qf" id="quantity-form" method="POST" action="{% url 'compostOffer' %}">
+    {% csrf_token %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-6" id="composts-container">
       {% for compost in composts %}
       <div class="col mb-4">
@@ -88,22 +89,22 @@
   <div class="col-6 col-sm-12">
     <div class="input-group input-group-lg mb-3">
       <span class="input-group-text" >Manure</span>
-      <input type="text" class="form-control quantities" id="animal-manure-quantities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      {{ form.manure }}
       <span class="input-group-text">Kg</span>
     </div>
     <div class="input-group input-group-lg mb-3">
       <span class="input-group-text">Brown Material</span>
-      <input type="text" class="form-control quantities" id="plant-based-fertilizers-quantities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      {{ form.brown_material }}
       <span class="input-group-text">Kg</span>
     </div>
     <div class="input-group input-group-lg mb-3">
       <span class="input-group-text">Green Material</span>
-      <input type="text" class="form-control quantities" id="biodegradable-fertilizers-qauntities" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+      {{ form.green_material }}
       <span class="input-group-text">Kg</span>
     </div>
 
     <div class="input-group">
-      <input type="text" id="my-date-picker" class="form-control" placeholder="Select Date Range">
+      {{ form.date_range }}
       <span class="input-group-text"><i class="bi bi-calendar"></i></span>
     </div>
 
@@ -129,7 +130,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-//get id
+//get ids'
   const NextPickDateBtn = document.getElementById('calculate-quantity');
   const CompostsContainer = document.getElementById('composts-container');
   const CategorizeComposts = document.getElementById('categorize-composts');
@@ -139,9 +140,9 @@
   let BiodegradableFertilizersElements = document.querySelectorAll('.BiodegradableFertilizers');
   let PlantFertilizersElements = document.querySelectorAll('.PlantFertilizers');
   
-  AnimalmanureField = document.getElementById('animal-manure-quantities');
-  BiodegradableFertilizersField = document.getElementById('biodegradable-fertilizers-qauntities');
-  PlantFertilizersField = document.getElementById('plant-based-fertilizers-quantities')
+  AnimalmanureField = document.getElementById('id_manure');
+  BiodegradableFertilizersField = document.getElementById('id_green_material');
+  PlantFertilizersField = document.getElementById('id_brown_material')
 
   
 
@@ -185,9 +186,9 @@
 });
 
 
-  flatpickr("#my-date-picker", {
+  flatpickr("#id_date_range", {
     mode: "range",
-    dateFormat: "d-m-Y",
+    dateFormat: "Y-m-d",
     minDate: "today",
     maxDate: "31-12-2025",
     icon: '<i class="bi bi-calendar"></i>'

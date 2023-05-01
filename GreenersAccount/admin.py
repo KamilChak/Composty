@@ -4,7 +4,7 @@ from .models import Greener, Offer
 
 
 class GreenerAdmin(UserAdmin):
-    list_display = ('id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'composter')
+    list_display = ('id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'composter', 'Location', 'wallet')
     list_filter = ('is_staff', 'is_superuser', 'groups')
     search_fields = ('FirstName', 'LastName', 'Email', 'PhoneNumber')
     ordering = ('id',)
@@ -26,4 +26,4 @@ admin.site.register(Greener, GreenerAdmin)
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'manure', 'brown_material', 'green_material', 'date_range_start', 'date_range_end')
+    list_display = ('id', 'sender', 'manure', 'brown_material', 'green_material', 'date_range_start', 'date_range_end', 'confirmed')

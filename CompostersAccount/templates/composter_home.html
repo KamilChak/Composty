@@ -2,9 +2,6 @@
 {% load static %}
 
 
-
-
-
 {% block content %}
 
 
@@ -67,8 +64,9 @@ a {
     
 
         <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center " id="right-page">
-            <div>Ras Jbal Community</div>
-            <div id="map"></div>
+            <div>{{composter.CommunityName}}</div>
+            <div id="map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-greeners="{{ greeners_json }}"></div>
+
             
             <div class="d-flex flex-column align-items-center justify-content-center">
                 <p>Compost Request : </p>
@@ -86,17 +84,32 @@ a {
 
 </div>
 
-<script>
 
-    var map = L.map('map').setView([51.505, -0.09], 13);
+
+<script>
+    var latitude = parseFloat(document.getElementById('map').getAttribute('data-latitude'));
+    var longitude = parseFloat(document.getElementById('map').getAttribute('data-longitude'));
+
+    var map = L.map('map').setView([latitude, longitude], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    L.marker([51.5, -0.09]).addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    L.marker([latitude, longitude]).addTo(map)
+        .bindPopup('Your location')
         .openPopup();
 
+        var greeners = JSON.parse(document.getElementById('map').getAttribute('data-greeners'));
+
+for (var i = 0; i < greeners.length; i++) {
+    var greener = greeners[i];
+    var latlng = L.latLng(greener.Location.y, greener.Location.x);
+    var marker = L.marker(latlng).addTo(map);
+    marker.bindPopup(greener.FirstName + ' ' + greener.LastName);
+}
+
+    
 </script>
+
 {% endblock %}

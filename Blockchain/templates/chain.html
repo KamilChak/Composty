@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Blockchain</h1>
+            <hr>
+          </div>
+        </div>
+      
+        {% for block in chain %}
+          <div class="row mb-5">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  Block #{{ block.index }}
+                </div>
+                <div class="card-body">
+                  <ul class="list-group">
+                    <li class="list-group-item">Timestamp: {{ block.timestamp }}</li>
+                    <li class="list-group-item">Previous Hash: {{ block.previous_hash }}</li>
+                    <li class="list-group-item">Hash: {{ block.hash }}</li>
+                    <li class="list-group-item">
+                      Transactions:
+                      <ul class="list-group">
+                        {% if block.transaction %}
+                        <li class="list-group-item">Sender: {{ block.transaction.sender }}</li>
+                        <li class="list-group-item">Recipient: {{ block.transaction.recipient }}</li>
+                        <li class="list-group-item">Amount: {{ block.transaction.amount }}</li>
+                        {% else %}
+                        <li class="list-group-item">No transactions</li>
+                        {% endif %}
+                      </ul>
+                    </li>
+                    <li class="list-group-item">Nonce: {{ block.nonce }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      
+      </div>
+</body>
+</html>

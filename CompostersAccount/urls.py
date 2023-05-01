@@ -7,5 +7,6 @@ urlpatterns = [
     path('home/', views.composterHome, name='composterHome'),
     path('calendar/', views.composterCalendar, name="composterCalendar"),
     path('GreenersRequest/', views.composterGreenersRequest, name='composterGreenersRequest'),
+    path('confirm_offer/<int:offer_id>/', views.confirm_offer, name='confirm_offer'),
     path('logout/', views.logoff , name='logoff'),
 ]

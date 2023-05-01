@@ -1,43 +1,31 @@
-{% extends 'composter_Base.html' %}
+{% extends 'greener_Base.html' %}
 
 {% block content %}
     <div class="container">
-        <h1>Received Offers</h1>
+        <h1>My Offers</h1>
         <ul class="list-group">
             <li class="list-group-item list-group-item-dark">
                 <div class="row">
-                    <div class="col">From</div>
                     <div class="col">Green Material(Kg)</div>
                     <div class="col">Brown Material(Kg)</div>
                     <div class="col">Manure(Kg)</div>
                     <div class="col">Date Start</div>
                     <div class="col">Date End</div>
-                    <div class="col">Confirmation</div>
                 </div>
             </li>
             {% for offer in offers %}
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col" style="font-size: 1.1rem;" >{{ offer.sender }}</div>
                         <div class="col" style="font-size: 1.1rem;">{{ offer.green_material }}</div>
                         <div class="col" style="font-size: 1.1rem;">{{ offer.brown_material }}</div>
                         <div class="col" style="font-size: 1.1rem;">{{ offer.manure }}</div>
                         <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_start }}</div>
                         <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_end }}</div>
-                        <div class="col" style="font-size: 1.1rem;">
-                            {% if not offer.confirmed %}
-                            <a href="{% url 'confirm_offer' offer.id %}" class="btn btn-success" title="Confirm Offer">
-                                <i class="bi bi-check-circle"></i> Confirm</a>
-                            {% else %}
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            {% endif %}
-
-                        </div>
                     </div>
                 </li>
             {% endfor %}
         </ul>
-        <a href="{% url 'composterHome' %}" class="btn btn-secondary">Back</a>
+        <a href="{% url 'greenerHome' %}" class="btn btn-secondary">Back</a>
     </div>
     
 {% endblock %}

@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
+from decimal import Decimal
+from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
+from Blockchain.views import Blockchain
 from .forms import ComposterForm, ComposterLoginForm
 from .models import Composter
-from GreenersAccount.models import Greener
+from GreenersAccount.models import Greener, Offer
 from django.contrib import messages
-
+from django.core import serializers
 #libraries for auth
 from django.contrib.auth.hashers import make_password
 from .backends import ComposterAuthBackend
@@ -27,6 +30,11 @@ def composterSignup(request):
             # create a new Composter object with the cleaned form data
             composter = Composter.objects.create(OrganizationName=organization_name, CommunityName=community_name, Email=email, password=password, PhoneNumber=phone_number, Location=location)
             composter.save()
+
+            blockchain = Blockchain()
+
+            user_url = request.build_absolute_uri('/')[:-1]
+            blockchain.add_node(user_url, composter)
             
             # redirect to the success page
             return redirect('/')  # or any other success page
@@ -65,15 +73,55 @@ def composterLogin(request):
 
 @login_required
 def composterHome(request):
-    return render(request, 'Composter_home.html')
+    composter = request.user
+    latitude = composter.Location.y
+    longitude = composter.Location.x
+
+    greeners = composter.composters.all()
+    greeners_json = serializers.serialize('json', greeners)
+
+    context = {
+        'composter': composter,
+        'latitude': latitude,
+        'longitude': longitude,
+        'greeners_json': greeners_json,
+    }
+    return render(request, 'Composter_home.html', context)
+
 
 @login_required
 def composterCalendar(request):
     return render(request, 'composter_calendar.html')
 
+
 @login_required
 def composterGreenersRequest(request):
-    return render(request, 'greeners_request.html')
+    offers = Offer.objects.all()
+
+    context = {
+        'offers': offers
+    }
+    return render(request, 'greeners_request.html', context)
+
+
+def confirm_offer(request, offer_id):
+    offer = get_object_or_404(Offer, pk=offer_id)
+    offer.confirmed = True
+    offer.save()
+
+    blockchain = Blockchain()
+
+    amount = Decimal(str(offer.green_material + offer.brown_material + offer.manure))
+    
+    blockchain.add_transaction(offer.sender.composter.id, offer.sender.id, amount, timezone.now())
+    blockchain.mine_block()
+
+    offer.sender.wallet += amount
+    offer.sender.save()
+
+    return redirect('composterGreenersRequest')
+
+
 
 def logoff(request):
     logout(request)

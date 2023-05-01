@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+
+from Blockchain.views import Blockchain
 from .forms import CompostOfferForm, GreenerForm, GreenerLoginForm
 from .models import Greener, Offer
 from CompostersAccount.models import Composter
@@ -37,6 +39,11 @@ def greenerSignup(request):
             # create a new Greener object with the cleaned form data
             greener = Greener.objects.create(FirstName=first_name, LastName=last_name, Email=email, password=password, PhoneNumber=phone_number, Location = location, composter = composterObject)
             greener.save()
+
+            blockchain = Blockchain()
+
+            user_url = request.build_absolute_uri('/')[:-1]
+            blockchain.add_node(user_url, greener)
             # redirect to the success page
             return redirect('/')  # or any other success page
     else:
@@ -77,8 +84,20 @@ def greenerLogin(request):
 
 @login_required
 def greenerHome(request):
+    
     user = request.user
-    context = {'user': user}
+    offers = Offer.objects.filter(sender=user)
+
+    offer_data = []
+
+    for offer in offers:
+        offer_sum = offer.manure + offer.brown_material + offer.green_material
+        offer_data.append({'offer': offer, 'sum': offer_sum})
+
+    context = {
+            'user': user,
+            'offer_data': offer_data,
+            }
     return render(request, 'Greener_home.html', context)
 
 
@@ -90,8 +109,6 @@ def getClosestComposters(request):
     UserLocationWKB = GEOSGeometry(UserLocationWKT)
     point = Point(UserLocationWKB.x,UserLocationWKB.y, srid=4326)
     
-    
-
     composters = Composter.objects.filter(Location__distance_lte=(point, 10000)).annotate(distance=Distance('Location', point)).order_by('distance')
 
     closest_composters = []
@@ -134,6 +151,17 @@ def compostOffer(request):
     return render(request, 'Compost_offer.html', context)
 
 
+
+@login_required
+def sentRequests(request):
+
+    user = request.user
+    offers = Offer.objects.filter(sender=user)
+
+    context = {
+        'offers': offers
+    }
+    return render(request, 'greeners_requests.html', context)
 
 
 

@@ -4,7 +4,7 @@ from .models import Composter
 
 
 class ComposterAdmin(UserAdmin):
-    list_display = ('Email', 'OrganizationName', 'CommunityName', 'PhoneNumber', 'is_staff')
+    list_display = ('Email', 'OrganizationName', 'CommunityName', 'PhoneNumber', 'Location','is_staff')
     search_fields = ('Email', 'OrganizationName', 'CommunityName', 'PhoneNumber')
     ordering = ('Email',)
     filter_horizontal = ()

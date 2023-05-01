@@ -30,6 +30,7 @@ class Greener(AbstractBaseUser, PermissionsMixin):
     Location = gis_models.PointField(srid=4326, default='POINT(0 0)')
     is_staff = models.BooleanField(default=False)
     composter = models.ForeignKey(Composter, on_delete=models.CASCADE, null=True, blank=True, related_name='composters')
+    wallet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     USERNAME_FIELD = 'Email'
     REQUIRED_FIELDS = ['FirstName', 'LastName', 'PhoneNumber']
@@ -39,6 +40,11 @@ class Greener(AbstractBaseUser, PermissionsMixin):
 
     objects = GreenerManager()
 
+    def __str__(self):
+        return f"{self.FirstName} {self.LastName}"
+
+    
+
 
 class Offer(models.Model):
     sender = models.ForeignKey(Greener, on_delete=models.CASCADE)
@@ -47,9 +53,7 @@ class Offer(models.Model):
     green_material = models.FloatField()
     date_range_start = models.DateField()
     date_range_end = models.DateField()
-
-    def __str__(self):
-        return f"{self.user.username}'s Compost Offer"
+    confirmed = models.BooleanField(default=False)
 
 
 

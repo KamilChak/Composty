@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('Composter/', include('CompostersAccount.urls')),
     path('Greener/', include('GreenersAccount.urls')),
+    path('Blockchain/', include('Blockchain.urls')),
 ]
 
 if settings.DEBUG:

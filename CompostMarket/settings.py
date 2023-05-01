@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'GreenersAccount',
     'CompostItem',
     'leaflet',
+    'Blockchain',
 ]
 
 MIDDLEWARE = [

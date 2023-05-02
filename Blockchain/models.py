@@ -7,12 +7,6 @@ class Transaction(models.Model):
     recipient = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        if self.sender is not None and self.recipient is not None:
-            return f"{self.sender} -> {self.recipient}: {self.amount}"
-        else:
-            return "NoneType object"
     
 class Node(models.Model):
     address = models.CharField(max_length=200)

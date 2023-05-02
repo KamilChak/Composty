@@ -4,7 +4,39 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        /* Body background color */
+        body {
+            background-color: #F0F0F0;
+        }
+        /* Main heading color */
+        h1 {
+            color: #009933;
+        }
+        /* Block header background color */
+        .card-header {
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #009933;
+            color: white;
+            border: 2px solid #009933;
+            border-radius: 4px;
+            padding: 8px;
+        }
+        /* Block body background color */
+        .card-body {
+            background-color: #FFFFFF;
+        }
+        .list-group-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    </style>
+    <title>Blockchain</title>
 </head>
 <body>
     <div class="container">
@@ -20,33 +52,74 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header">
-                  Block #{{ block.index }}
+                  {% if block.index == 1 %}
+                    Genesis block
+                  {% else %}
+                    Block #{{ block.index }}
+                  {% endif %}
                 </div>
                 <div class="card-body">
                   <ul class="list-group">
-                    <li class="list-group-item">Timestamp: {{ block.timestamp }}</li>
-                    <li class="list-group-item">Previous Hash: {{ block.previous_hash }}</li>
-                    <li class="list-group-item">Hash: {{ block.hash }}</li>
-                    <li class="list-group-item">
-                      Transactions:
-                      <ul class="list-group">
-                        {% if block.transaction %}
-                        <li class="list-group-item">Sender: {{ block.transaction.sender }}</li>
-                        <li class="list-group-item">Recipient: {{ block.transaction.recipient }}</li>
-                        <li class="list-group-item">Amount: {{ block.transaction.amount }}</li>
-                        {% else %}
-                        <li class="list-group-item">No transactions</li>
-                        {% endif %}
-                      </ul>
+                    <li class="list-group-item row">
+                      <div class="col-sm-3"><strong>Timestamp:</strong></div>
+                      <div class="col-sm-9">{{ block.timestamp }}</div>
                     </li>
-                    <li class="list-group-item">Nonce: {{ block.nonce }}</li>
+                    <li class="list-group-item row">
+                      <div class="col-sm-3"><strong>Previous Hash:</strong></div>
+                      <div class="col-sm-9">{{ block.previous_hash }}</div>
+                    </li>
+                    <li class="list-group-item row">
+                      <div class="col-sm-3"><strong>Hash:</strong></div>
+                      <div class="col-sm-9">{{ block.hash }}</div>
+                    </li>
+                    <li class="list-group-item row">
+                      <div class="col-sm-3"><strong>Transactions:</strong></div>
+                      <div class="col-sm-9">
+                        <ul class="list-group">
+                          {% if block.transaction %}
+                          <li class="list-group-item"><strong>Sender:</strong> {{ block.transaction.sender }}</li>
+                          <li class="list-group-item"><strong>Recipient:</strong> {{ block.transaction.recipient }}</li>
+                          <li class="list-group-item"><strong>Amount:</strong> {{ block.transaction.amount }}</li>
+                          {% else %}
+                          <li class="list-group-item">No transactions</li>
+                          {% endif %}
+                        </ul>
+                      </div>
+                    </li>
+                    <li class="list-group-item row">
+                      <div class="col-sm-3"><strong>Nonce:</strong></div>
+                      <div class="col-sm-9">{{ block.nonce }}</div>
+                    </li>
                   </ul>
                 </div>
+                
               </div>
             </div>
           </div>
         {% endfor %}
       
       </div>
+
+    <!-- Link Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      const blocks = document.querySelectorAll('.card');
+      
+      blocks.forEach(block => {
+        block.addEventListener('mouseover', () => {
+          block.style.backgroundColor = '#c3e6cb'; // Bright green color
+          block.style.border = '2px solid green'; // Add border to highlight block
+        });
+        
+        block.addEventListener('mouseout', () => {
+          block.style.backgroundColor = 'white';
+          block.style.border = 'none'; // Remove border when mouse moves away
+        });
+      });
+    </script>
+    
 </body>
 </html>

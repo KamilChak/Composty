@@ -97,9 +97,6 @@ class Blockchain:
         return block
     
 
-    
-    def get_chain(self):
-        pass
 
 
 

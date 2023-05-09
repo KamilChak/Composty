@@ -99,28 +99,7 @@ class Blockchain:
 
 
 
-
-
 blockchain = Blockchain()
-
-
-"""@csrf_exempt
-def transaction(request):
-    composter_id = request.POST['composter_id']
-    greener_id = request.POST['greener_id']
-    amount = Decimal(request.POST['amount'])
-    composter = Composter.objects.get(id=composter_id)
-    greener = Greener.objects.get(id=greener_id)
-    blockchain.add_transaction(composter.id, greener.id, amount, time=str(datetime.datetime.now()))
-    block = blockchain.mine_block()
-    greener.wallet += amount
-    greener.save()
-    response = {
-        'message': f'Transaction successful! {amount} credits added to greener wallet.',
-        'block': block
-    }
-    return JsonResponse(response)"""
-
 
 
 def display_chain(request):

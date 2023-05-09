@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils import timezone
 
+from GreenersAccount.models import Greener, Composter
+
 
 class Transaction(models.Model):
-    sender = models.CharField(max_length=100)
-    recipient = models.CharField(max_length=100)
+    sender = models.ForeignKey(Composter, on_delete=models.CASCADE, related_name='sent_transactions')
+    recipient = models.ForeignKey(Greener, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(default=timezone.now)
     

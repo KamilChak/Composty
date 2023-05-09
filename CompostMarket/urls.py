@@ -26,6 +26,7 @@ urlpatterns = [
     path('Composter/', include('CompostersAccount.urls')),
     path('Greener/', include('GreenersAccount.urls')),
     path('Blockchain/', include('Blockchain.urls')),
+    path('adminui/', include('AdminUI.urls')),
 ]
 
 if settings.DEBUG:

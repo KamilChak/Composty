@@ -1,3 +1,4 @@
+
 from decimal import Decimal
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
@@ -6,7 +7,6 @@ from .forms import ComposterForm, ComposterLoginForm
 from .models import Composter
 from GreenersAccount.models import Greener, Offer
 from django.contrib import messages
-from django.core import serializers
 #libraries for auth
 from django.contrib.auth.hashers import make_password
 from .backends import ComposterAuthBackend
@@ -78,13 +78,12 @@ def composterHome(request):
     longitude = composter.Location.x
 
     greeners = composter.composters.all()
-    greeners_json = serializers.serialize('json', greeners)
 
     context = {
         'composter': composter,
         'latitude': latitude,
         'longitude': longitude,
-        'greeners_json': greeners_json,
+        'greeners': greeners,
     }
     return render(request, 'Composter_home.html', context)
 
@@ -106,18 +105,20 @@ def composterGreenersRequest(request):
 
 def confirm_offer(request, offer_id):
     offer = get_object_or_404(Offer, pk=offer_id)
-    offer.confirmed = True
-    offer.save()
-
+    
     blockchain = Blockchain()
 
     amount = Decimal(str(offer.green_material + offer.brown_material + offer.manure))
-    
-    blockchain.add_transaction(offer.sender.composter.id, offer.sender.id, amount, timezone.now())
-    blockchain.mine_block()
+    #add_transation(sender, recipient, amount, time)
+    transaction = blockchain.add_transaction(request.user, offer.sender, amount, timezone.now())
+
+    blockchain.mine_block(transaction)
 
     offer.sender.wallet += amount
     offer.sender.save()
+
+    offer.confirmed = True
+    offer.save()
 
     return redirect('composterGreenersRequest')
 

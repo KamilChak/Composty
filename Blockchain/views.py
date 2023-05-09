@@ -33,20 +33,17 @@ class Blockchain:
             self.nodes.add((node.address, node.user_id))
 
     def add_transaction(self, sender, recipient, amount, time):
-        
-        self.current_transactions.append({
-            'sender': sender,
-            'recipient': recipient,
-            'amount': amount,
-            'time': time
-        })
-
         transaction = Transaction.objects.create(
             sender=sender,
             recipient=recipient,
-            amount=amount
+            amount=amount,
+            timestamp=time
         )
         transaction.save()
+        self.current_transactions.append(transaction)
+        return transaction
+
+
 
     def hash(self, block):
         block_string = json.dumps(block, sort_keys=True, cls=DjangoJSONEncoder).encode()
@@ -60,26 +57,23 @@ class Blockchain:
                 return nonce
             nonce += 1
 
-    def mine_block(self):
+    def mine_block(self, transaction):
         previous_block = Block.objects.last()
         previous_hash = previous_block.hash
         nonce = self.proof_of_work(previous_hash)
-
-        transaction_dict = self.current_transactions[0]
-        transaction = Transaction.objects.create(
-            sender=transaction_dict['sender'],
-            recipient=transaction_dict['recipient'],
-            amount=transaction_dict['amount'],
-            timestamp=transaction_dict['time'],
-        )
 
         block_hash = self.hash({
             'index': len(self.chain) + 1,
             'timestamp': str(datetime.datetime.now()),
             'nonce': nonce,
-            'transaction': transaction_dict,
+            'transaction': {
+                'sender': transaction.sender.id,
+                'recipient': transaction.recipient.id,
+                'amount': str(transaction.amount),
+                'time': str(transaction.timestamp)
+            },
             'previous_hash': previous_hash
-        })
+         })
 
         block = Block.objects.create(
             index=len(self.chain) + 1,
@@ -89,12 +83,14 @@ class Blockchain:
             previous_hash=previous_hash,
             hash=block_hash
         )
-    
+
         block.save()
         self.current_transactions = []
         chain = list(Block.objects.all())
         chain.append(block)
         return block
+
+
     
 
 

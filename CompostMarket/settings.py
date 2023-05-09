@@ -44,7 +44,13 @@ INSTALLED_APPS = [
     'CompostItem',
     'leaflet',
     'Blockchain',
+    'AdminUI',
+    'admin_datta.apps.AdminDattaConfig',
 ]
+
+LOGIN_URL = 'adminUI:login'
+LOGIN_REDIRECT_URL = 'adminUI:adminUI'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

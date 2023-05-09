@@ -100,14 +100,6 @@ a {
         .bindPopup('Your location')
         .openPopup();
 
-        var greeners = JSON.parse(document.getElementById('map').getAttribute('data-greeners'));
-
-for (var i = 0; i < greeners.length; i++) {
-    var greener = greeners[i];
-    var latlng = L.latLng(greener.Location.y, greener.Location.x);
-    var marker = L.marker(latlng).addTo(map);
-    marker.bindPopup(greener.FirstName + ' ' + greener.LastName);
-}
 
     
 </script>

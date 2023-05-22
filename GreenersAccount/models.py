@@ -48,6 +48,7 @@ class Greener(AbstractBaseUser, PermissionsMixin):
 
 class Offer(models.Model):
     sender = models.ForeignKey(Greener, on_delete=models.CASCADE)
+    #recipient = models.ForeignKey(Composter, on_delete=models.CASCADE)
     manure = models.FloatField()
     brown_material = models.FloatField()
     green_material = models.FloatField()

@@ -95,8 +95,7 @@ def composterCalendar(request):
 
 @login_required
 def composterGreenersRequest(request):
-    offers = Offer.objects.all()
-
+    offers = Offer.objects.filter(sender__composter=request.user)
     context = {
         'offers': offers
     }

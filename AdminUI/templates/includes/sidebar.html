@@ -16,11 +16,11 @@
         <li class="nav-item pcoded-menu-caption">
           <label>Navigation</label>
         </li>
-        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item {% if 'index' in segment %}active{% endif %}">
+        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item {% if 'adminUI' in segment %}active{% endif %}">
           {% if request.user.is_superuser %}
-          <a href="{% url 'admin:index' %}" class="nav-link ">
+          <a href="{% url 'adminUI:adminUI' %}" class="nav-link ">
           {% else %}
-          <a href="{% url 'index' %}" class="nav-link ">
+          <a href="{% url 'adminUI' %}" class="nav-link ">
           {% endif %}
             <span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span>
           </a>

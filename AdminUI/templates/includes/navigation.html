@@ -113,7 +113,7 @@
               <span>John Doe</span>
               {% if request.user.is_authenticated %}
                 {% if request.user.is_superuser %}
-                <a href="{% url 'admin:logout' %}" class="dud-logout" title="Logout">
+                <a href="{% url 'adminUI:logout' %}" class="dud-logout" title="Logout">
                 {% else %}
                 <a href="{% url 'logout' %}" class="dud-logout" title="Logout">
                 {% endif %}

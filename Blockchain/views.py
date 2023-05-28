@@ -1,5 +1,4 @@
 import datetime
-from decimal import Decimal
 import hashlib
 import json
 from urllib.parse import urlparse
@@ -7,9 +6,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from CompostersAccount.models import Composter
-from GreenersAccount.models import Greener
 from .models import Block, Node, Transaction
+from django.db.utils import ProgrammingError
+
 
 
 class Blockchain:
@@ -21,7 +20,10 @@ class Blockchain:
         self.load_blocks()
 
     def load_blocks(self):
-        self.chain = Block.objects.all().order_by('index')
+        try:
+            self.chain = Block.objects.all().order_by('index')
+        except ProgrammingError:
+            self.chain = []
     
     def add_node(self, address, user):
         parsed_url = urlparse(address)
@@ -29,8 +31,11 @@ class Blockchain:
         node.save()
 
     def load_nodes(self):
-        for node in Node.objects.all():
-            self.nodes.add((node.address, node.user_id))
+        try:
+            for node in Node.objects.all():
+                self.nodes.add((node.address, node.user_id))
+        except ProgrammingError:
+            self.nodes = set()
 
     def add_transaction(self, sender, recipient, amount, time):
         transaction = Transaction.objects.create(

@@ -4,7 +4,7 @@ from .models import Greener, Offer
 
 
 class GreenerAdmin(UserAdmin):
-    list_display = ('id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'composter', 'Location', 'wallet')
+    list_display = ('id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'composter', 'Location', 'wallet', 'ComposterStatus')
     list_filter = ('is_staff', 'is_superuser', 'groups')
     search_fields = ('FirstName', 'LastName', 'Email', 'PhoneNumber')
     ordering = ('id',)

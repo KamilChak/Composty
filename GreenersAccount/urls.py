@@ -9,4 +9,9 @@ urlpatterns = [
     path('get_closest_composters/', views.getClosestComposters, name='getClosestComposters'),
     path('send_requests/', views.sentRequests, name='sentRequests'),
     path('logout/', views.logoff , name='logoff'),
+    path('GreenerHomeChooseComposter/', views.greenerHomeChooseComposter, name='greenerHomeChooseComposter'),
+    path('GreenerRequestComposterLink/', views.greenerRequestComposterLink, name='greenerRequestComposterLink'),
+    path('GreenerNotification', views.greenerNotification, name='greenerNotification'),
+    path('update_composter/', views.updateComposter, name ='updateComposter'),
+    path('checkEmail/', views.checkEmail, name="checkEmail"),
 ]

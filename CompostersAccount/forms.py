@@ -26,13 +26,13 @@ class ComposterForm(forms.ModelForm):
 
     def clean_OrganizationName(self):
         organization_name = self.cleaned_data.get('OrganizationName')
-        if not re.match(r'^[a-zA-Z]{2,}$', organization_name):
+        if not re.match(r'^[a-zA-Z\s]+$', organization_name):
             raise forms.ValidationError("Organization name must contain only letters and cannot be less than 2 letters")
         return organization_name
 
     def clean_CommunityName(self):
         community_name = self.cleaned_data.get('CommunityName')
-        if not re.match(r'^[a-zA-Z]{2,}$', community_name):
+        if not re.match(r'^[a-zA-Z\s]+$', community_name):
             raise forms.ValidationError("Community name must contain only letters cannot be less than 2 letters")
         return community_name
     

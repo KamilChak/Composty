@@ -32,6 +32,13 @@ class Greener(AbstractBaseUser, PermissionsMixin):
     composter = models.ForeignKey(Composter, on_delete=models.CASCADE, null=True, blank=True, related_name='composters')
     wallet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
+    COMPOSTER_STATUS = (
+        ('waiting', 'Waiting'),
+        ('accepted', 'Accepted'),
+    )
+    
+    ComposterStatus = models.CharField(max_length=50, choices=COMPOSTER_STATUS, default='waiting')
+
     USERNAME_FIELD = 'Email'
     REQUIRED_FIELDS = ['FirstName', 'LastName', 'PhoneNumber']
 
@@ -48,7 +55,6 @@ class Greener(AbstractBaseUser, PermissionsMixin):
 
 class Offer(models.Model):
     sender = models.ForeignKey(Greener, on_delete=models.CASCADE)
-    #recipient = models.ForeignKey(Composter, on_delete=models.CASCADE)
     manure = models.FloatField()
     brown_material = models.FloatField()
     green_material = models.FloatField()
@@ -57,6 +63,11 @@ class Offer(models.Model):
     confirmed = models.BooleanField(default=False)
 
 
+class GreenerNotifications(models.Model):
+    greener = models.ForeignKey(Greener, on_delete=models.CASCADE, related_name='greener')
+    Message = models.CharField(max_length=255)
+    Timestamp = models.DateTimeField(auto_now_add=True)
+    IsRead = models.BooleanField(default=False)
 
-
-
+    class Meta:
+        ordering = ['-Timestamp']

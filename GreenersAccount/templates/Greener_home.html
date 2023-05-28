@@ -1,170 +1,185 @@
-
 {% extends 'greener_Base.html' %}
-
 {% load static %}
 
-
-{% block title %}Home{% endblock %}
-
+{% block title %}Home{%endblock %}
 
 {% block content %}
+<link
+  href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap"
+  rel="stylesheet"
+/>
 
 <style>
-  * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background-color: #b1a17f;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 20%;
-  height: 100%;
-  background-color: #333;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.navbar h1 {
-  color: white;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  margin-bottom: 20px;
-  font-size: 35px;
-}
-
-ul {
-  list-style: none;
-  margin: 50px 0 0 0;
-  padding: 0;
-  flex-grow: 1;
-}
-
-.navbar li {
-  padding: 25px 0 0 0;
-}
-
-a {
-  color: #fff;
-  font-size: 30px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #b1a17f;
-}
-
-.container {
-  width: 80%;
-  margin-left: 25%;
-}
-
-.submit-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #10550e;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
+  a {
+    font-family: "Nunito";
+    text-decoration: none;
+    font-size: 1.2em;
+    padding: 10px 0;
+    transition: color 0.4s ease;
+    border-radius: 4px;
+    border: 0.2px solid yellow;
+    color: #deff99;
   }
 
-  .submit-button:hover {
-    background-color: #358132;
-    cursor: pointer;
+  a:hover {
+    background-color: #deff99;
+    transition: color 0.4s ease;
+    color: #857b63;
   }
-  
+
+  .row {
+    display: flex;
+    position: relative;
+  }
+
+  #left-page {
+    background-color: #857b63;
+    flex: 1 1 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #left-page div:nth-child(1) {
+    width: 90%;
+    padding: 5px;
+    margin-top: 120px;
+    margin-bottom: 80px;
+  }
+
+  #left-page div:nth-child(2),
+  #left-page div:nth-child(3),
+  #left-page div:nth-child(4),
+  #left-page div:nth-child(5) {
+    width: 90%;
+    padding: 5px 0;
+    margin: 10px 0;
+  }
+
+  #left-page div:nth-child(5) a {
+    color: rgb(255, 150, 100);
+    border: 0.2px solid rgb(255, 150, 100);
+  }
+
+  #left-page .icon {
+    font-size: 1.3em;
+  }
+
+  .menu a {
+    display: flex;
+    align-items: center;
+    padding-left: 35px;
+  }
+
+  .menu a i {
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
   .submit-button i {
     margin-left: 10px;
   }
 
-.logo {
+  #right-page {
+    background-color: #fdf7ea;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
+
+  .coin-logo {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 400px;
   }
-  
-  .logo img {
+
+  .coin-logo img {
     max-width: 80%;
     max-height: 80%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     border-radius: 50%;
-    margin-top: 150px;
+    margin-top: 100px;
     margin-bottom: 25px;
     background-color: white;
   }
-  
-  .logo .score {
+
+  .score {
     font-size: 40px;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-weight: bold;
     text-align: center;
-    color: rgb(63, 76, 11);
+    color: black;
     padding: 21px 21px;
   }
 
-  .logo .score span {
-    color: white;
+  .score span {
+    color: #45652f;
   }
 
-  .history {
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    margin: 150px 200px;
-    background-color: #eee0c6;
-    border: none;
-    border-radius: 5px;
+  .list-group {
+    margin-top: 25px;
   }
 
-  .history ul li {
-    font-size: 20px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    padding: 8px 0 8px 25px;
+  .list-group-item {
+    height: 60px;
+    width: 100%;
+    font-size: larger;
+    line-height: 200%;
   }
 </style>
 
+<div class="fluid-container">
+  <div class="row">
+    <div
+      class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu"
+      id="left-page"
+    >
+      <div class="logo">
+        <img src="{% static 'images/composter_logo.svg' %}"/>
+      </div>
+      <div class="c-greeners-dashboard">
+        <a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i>Dashboard</a>
+      </div>
+      <div class="c-greeners-submit">
+        <a href="{% url 'compostOffer' %}"><i class="bi bi-arrow-right-square"></i>Submit Compost</a>
+      </div>
+      <div class="c-greeners-request">
+        <a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a>
+      </div>
+      <div class="mt-5">
+        <a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a>
+      </div>
+    </div>
 
-<div class="navbar">
-  <h1>Welcome {{user.FirstName}}</h1>
-  <ul>
-    <li><a href="{% url 'sentRequests' %}">View History</a></li>
-    <li><a href="{% url 'logoff' %}">Logout</a></li>
-  </ul>
-</div>
+    <div
+      class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center"
+      id="right-page"
+    >
+      <!-- https://icon-library.com/icon/compost-icon-19.html.html>Compost Icon # 140196 -->
+      <div class="coin-logo">
+        <img src="{% static 'images/coin-logo.png' %}" alt="Logo" />
+      </div>
 
-<div class="container">
+      <div>
+        <h1 class="score">Your Score is : <span>{{user.wallet}}</span></h1>
+      </div>
 
-  <a href="{% url 'compostOffer' %}">
-      <button class="submit-button">Submit Compost<i class="bi bi-arrow-right-square"></i></button>
-    </a>          
-
-  <div class="logo">
-      <img src="{% static 'logo.png' %}" alt="Logo">
-      <h1 class="score">Your Score is : <span>{{user.wallet}}</span></h1>
-  </div>
-  
-  <div class="history">
-    <ul>
-        {% for data in offer_data %}
-            <li>
-                Sent: <strong>{{ data.sum }}</strong> Kg
-                To: <strong>{{ data.offer.sender.composter }}</strong>
-                On: <strong>{{ data.offer.date_range_start }}</strong>
-            </li>
+      <ul class="list-group">
+        {% for transaction in transactions %}
+        <li class="list-group-item">
+          <strong>Recieved:</strong> {{ transaction.amount }} Compo Coins
+          <strong>From:</strong> {{transaction.sender}} 
+          <strong>On:</strong> {{transaction.timestamp }}
+        </li>
         {% endfor %}
-    </ul>
-</div>
-
+      </ul>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

@@ -9,4 +9,11 @@ urlpatterns = [
     path('GreenersRequest/', views.composterGreenersRequest, name='composterGreenersRequest'),
     path('confirm_offer/<int:offer_id>/', views.confirm_offer, name='confirm_offer'),
     path('logout/', views.logoff , name='logoff'),
+    path('getPendingMembers/', views.getPendingMembers, name="getPendingMembers"),
+    path('accept_greener/',views.acceptGreener, name='acceptGreener'),
+    path('reject_greener/',views.rejectGreener, name='rejectGreener'),
+    path('offers_data/',views.GreenersOffers, name="GreenersOffers"),
+    path('GreenersRequest/', views.getGreenersOffer, name='getGreenersOffer'),
+    path('ComposterMembers/', views.getComposterMembers, name='getComposterMembers'),
+    path('checkEmail/', views.checkEmail, name="checkEmail"),
 ]

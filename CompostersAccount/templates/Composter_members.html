@@ -1,0 +1,157 @@
+{% extends 'composter_Base.html' %}
+{% load static %}
+
+
+
+
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap" rel="stylesheet">
+
+
+<style>
+
+    a {
+        font-family: 'Nunito';
+        text-decoration: none;
+        font-size: 1.2em;
+        padding: 10px 0;
+        transition: color 0.4s ease;
+        border-radius: 4px;
+        border: 0.2px solid yellow;
+        color: #DEFF99;
+
+    }
+
+    a:hover {
+        background-color: #DEFF99;
+        transition: color 0.4s ease;
+        color: #857B63;
+    }
+
+    .row {
+        display: flex;
+        position: relative;
+    }
+
+    #left-page {
+        background-color: #857b63;
+        flex: 1 1 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #left-page div:nth-child(1) {
+        width: 90%;
+        padding: 5px;
+        margin-top: 120px;
+        margin-bottom: 80px;
+    }
+
+    #left-page div:nth-child(2),
+    #left-page div:nth-child(3),
+    #left-page div:nth-child(4),
+    #left-page div:nth-child(5),
+    #left-page div:nth-child(6) {
+        width: 90%;
+        padding: 5px 0;
+        margin: 10px 0;
+    }
+
+    #left-page div:nth-child(6) a {
+        color: rgb(255, 150, 100);
+        border: 0.2px solid rgb(255, 150, 100);
+    }
+
+
+    #left-page .icon {
+        font-size: 1.3em;
+    }
+
+    .menu a {
+        display: flex;
+        align-items: center;
+        padding-left: 35px;
+    }
+
+    .menu a i {
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+    
+    #right-page {
+        min-height: 100vh;
+        background-color: #FDF7EA;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .table {
+        width: 80%;
+        max-height: 100%;
+        background-color: white;
+        overflow-y: auto;
+    }
+
+</style>
+
+
+<div class="fluid-container">
+
+
+
+    <div class="row">
+
+        <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
+
+            <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
+            <div class="greeners-calndar"><a href="{% url 'composterHome' %}"><i class="bi bi-house"></i>Dashboard</a></div>
+            <div class="greeners-request"><a href="{% url 'getGreenersOffer'%}"><i class="bi bi-archive-fill"></i>Greeners Requests</a></div>
+            <div class="pending-members"><a href="{% url 'getPendingMembers' %}"><i class="bi bi-person-plus-fill"></i>Pending Members</a></div>
+            <div class="mb-5 c-greeners-request"><a href="{% url 'getComposterMembers' %}"><i class="bi bi-people-fill"></i>My Members</a></div>
+            <div class="mt-5"><a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a></div>
+        
+        </div>
+
+        
+        <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Identifier</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for member in membresArray %}
+                  <tr>
+                    <td>{{ member.id }}</td>
+                    <td>{{ member.FirstName }}/td>
+                    <td>{{ member.LastName }}</td>
+                    <td>{{ member.Email }}</td>
+                    <td>{{ member.PhoneNumber}}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+        </div>
+
+        
+
+    </div>
+
+
+
+
+</div>
+
+{% endblock %}

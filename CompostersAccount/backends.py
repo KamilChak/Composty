@@ -8,8 +8,8 @@ class ComposterAuthBackend(BaseBackend):
         try:
             composter = Composter.objects.get(Email=email)
             print(composter.password)
-            print('entred password' , password)
-            print('entred hashed password' , make_password(password))
+            print('entered password' , password)
+            print('entered hashed password' , make_password(password))
             if check_password(password, composter.password):
                 return composter
         except Composter.DoesNotExist:

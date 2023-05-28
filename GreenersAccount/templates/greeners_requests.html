@@ -1,31 +1,146 @@
 {% extends 'greener_Base.html' %}
 
+{% load static %}
+
+{% block title %}Offers{%endblock %}
+
 {% block content %}
-    <div class="container">
-        <h1>My Offers</h1>
-        <ul class="list-group">
-            <li class="list-group-item list-group-item-dark">
-                <div class="row">
-                    <div class="col">Green Material(Kg)</div>
-                    <div class="col">Brown Material(Kg)</div>
-                    <div class="col">Manure(Kg)</div>
-                    <div class="col">Date Start</div>
-                    <div class="col">Date End</div>
+
+
+<style>
+    a {
+        text-decoration: none;
+        font-size: 1.2em;
+        padding: 10px 0;
+        transition: color 0.4s ease;
+        border-radius: 4px;
+        border: 0.2px solid yellow;
+        color: #DEFF99;
+
+    }
+
+    a:hover {
+        background-color: #DEFF99;
+        transition: color 0.4s ease;
+        color: #857B63;
+    }
+
+    .row {
+        display: flex;
+        position: relative;
+    }
+
+    #left-page {
+    background-color: #857b63;
+    flex: 1 1 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+    #left-page div:nth-child(1){
+    width: 90%;
+    padding: 5px;
+    margin-top: 120px;
+    margin-bottom: 80px;
+}
+
+#left-page div:nth-child(2), #left-page div:nth-child(3),#left-page div:nth-child(4), #left-page div:nth-child(5){
+    width: 90%;
+    padding:5px 0;
+    margin:10px 0;
+}
+
+#left-page div:nth-child(5) a {
+    color: rgb(255, 150, 100);
+    border: 0.2px solid rgb(255, 150, 100);
+}
+
+    #left-page .icon {
+        font-size: 1.3em;
+    }
+
+    .menu a {
+        display: flex;
+        align-items: center;
+        padding-left: 35px;
+    }
+
+    .menu a i {
+        font-family: 'Nunito';
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+
+    #right-page {
+        background-color: #FDF7EA;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .heading-size {
+        font-size: 3rem;
+    }
+
+
+</style>
+
+<div class="fluid-container">
+    <div class="row">
+        <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
+
+            <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
+            <div class="c-greeners-dashboard"><a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i>Dashboard</a></div>
+            <div class="c-greeners-submit"><a href="{% url 'compostOffer' %}"><i class='bi bi-arrow-right-square'></i>Submit Compost</a></div>
+            <div class="c-greeners-request"><a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a></div>
+            <div class="mt-5"><a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a></div>
+            
+          </div>
+
+        <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
+            <div class="container">
+                <div class="col text-center">
+                    <h1 class="my-4 heading-size">My Offers</h1>
                 </div>
-            </li>
-            {% for offer in offers %}
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col" style="font-size: 1.1rem;">{{ offer.green_material }}</div>
-                        <div class="col" style="font-size: 1.1rem;">{{ offer.brown_material }}</div>
-                        <div class="col" style="font-size: 1.1rem;">{{ offer.manure }}</div>
-                        <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_start }}</div>
-                        <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_end }}</div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{% url 'greenerHome' %}" class="btn btn-secondary">Back</a>
+                <ul class="list-group text-center">
+                    <li class="list-group-item list-group-item-dark">
+                        <div class="row">
+                            <div class="col">Green Material(Kg)</div>
+                            <div class="col">Brown Material(Kg)</div>
+                            <div class="col">Manure(Kg)</div>
+                            <div class="col">Date Start</div>
+                            <div class="col">Date End</div>
+                            <div class="col">Confirmation</div>
+                        </div>
+                    </li>
+                    {% for offer in offers %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col" style="font-size: 1.1rem;">{{ offer.green_material }}</div>
+                                <div class="col" style="font-size: 1.1rem;">{{ offer.brown_material }}</div>
+                                <div class="col" style="font-size: 1.1rem;">{{ offer.manure }}</div>
+                                <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_start }}</div>
+                                <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_end }}</div>
+                                <div class="col" style="font-size: 1.1rem;">
+                                    {% if offer.confirmed %}
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    {% else %}
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
-    
+</div>
+
+<script></script>
+
 {% endblock %}

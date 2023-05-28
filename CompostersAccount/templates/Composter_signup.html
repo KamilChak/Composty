@@ -68,7 +68,6 @@
         visibility: hidden;
     }
 
-
     #submit-button {
         font-family: 'Open Sans';
         color: white;
@@ -86,12 +85,11 @@
 
     <div class="row" style="height : 100vh">
         <div class="col-4 d-flex align-items-center justify-content-center" id="left-paper">
-            <h1 class="mb-0"><span id="h1-greener-word">COMPOSTER</span> SIGNUP PAGE</h1>
+            <h1 class="mb-0"><span id="h1-greener-word">COMPOSTER</span> SIGNUP</h1>
         </div>
 
 
         <div class="col-8 d-flex align-items-center justify-content-center">
-
 
 
             <form action="" id="composter-form" class="row g-3 mb-0" method="POST">
@@ -99,12 +97,10 @@
                 <div class="col-12 d-flex justify-content-center align-items-center"><img id="logo"
                         src="{% static '/images/leaf.svg' %}"></div>
                 <div class="col-12 d-flex justify-content-center align-items-center" id="c-desc">Create an account</div>
-                <div class="col-12 d-flex justify-content-center align-items-center" id="s-desc">Signup to get started
-                    with an account</div>
+                <div class="col-12 d-flex justify-content-center align-items-center" id="s-desc">Signup to get started</div>
 
                 <div class="col-md-6">
-                    <label for="{{ form.OrganizationName.OrganizationName }}" class="form-label">Organization
-                        Name</label>
+                    <label for="{{ form.OrganizationName.OrganizationName }}" class="form-label">Organization Name</label>
                     {{ form.OrganizationName }}
                 </div>
                 <div class="col-md-6">
@@ -124,6 +120,8 @@
                     {{ form.PhoneNumber }}
                 </div>
                 {{ form.Location }}
+
+
                 <div class="col-12  d-flex justify-content-center align-items-center">
                     <div class="arrows">
                         <img id="hidden-arrow" class="arrow"
@@ -175,20 +173,11 @@
     });
 
 
-
-
-
-
-
-
-
-
-
     /*------------------------------------------------------*/
 
     var map = L.map('map', {
         doubleClickZoom: false
-      }).setView([51.505, -0.09], 13);
+      }).setView([35.690274, 9.480218], 7);
       
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

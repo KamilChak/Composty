@@ -1,0 +1,166 @@
+{% extends 'greener_Base.html' %}
+
+{% load static %}
+
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+<style>
+    #left-side {
+        height: 100vh;
+    }
+
+
+    #right-side {
+        background-color: #B6A885;
+        height: 100vh;
+    }
+
+
+    #left-side h1 {
+        font-family: 'Open Sans';
+        font-weight: 800;
+        font-size: 3.2em;
+    }
+
+    #left-side h2 {
+        font-family: 'Open Sans';
+        font-weight: 800;
+    }
+
+    #left-side #menu {
+        width: 48px;
+        color: black;
+    }
+
+
+
+
+    .col-7 h2 {
+        font-family: 'Open Sans';
+        color: white;
+    }
+
+    .nav-link {
+        margin: 10px 0px;
+        width: 100%;
+      }
+    
+      .nav-link a {
+        text-decoration: none;
+        color: black;
+      }
+    
+      #greener-menu {
+        width: 250px;
+      }
+    
+      #offcanvasExampleLabel .icon {
+        font-size: 1.7em;
+      }
+    
+      .offcanvas-body a {
+        color: black;
+        font-weight: bold;
+      }
+    
+      .offcanvas-body a {
+        color: black;
+        font-size: 1.2em;
+        margin-right: 10px;
+      }
+    
+      .offcanvas-body a .icon {
+        color: black;
+        font-size: 1.7em;
+        margin-right: 10px;
+      }
+    
+      .offcanvas-body .nav-link {
+        height: 60px;
+        border-radius: 8px;
+      }
+    
+      .offcanvas-body .nav-link:hover {
+        background-color: #1ED700;
+        border-radius: 8px;
+        color: white;
+      }
+</style>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+
+<div class="fluid-container">
+
+    
+
+
+
+    <div class="row">
+
+        <div class="col-5" id="left-side">
+            <div class="d-flex justify-content-start align-items-center " style="padding-left:10px; padding-top:10px;">
+              <div><img id="menu" data-bs-toggle="offcanvas" href="#greener-menu" src="{% static 'images/menu-logo.svg' %}"></div>
+              <div class="ms-2" id="menu-text">Menu</div>
+            </div>
+
+
+            <div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+              <h1 class="text-center">Welcome <span style="color:#BEDD00">{{ request.user.LastName }}</span></h1>
+            </div>
+
+          <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="greener-menu" aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title d-flex align-items-center" id="offcanvasExampleLabel"><i class='icon bx bxs-grid' ></i>Menu</h5>
+              <button type="button" class="btn-close d-flex align-items-center" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <nav class="nav flex-column d-flex justify-content-center align-items-center">
+                <p>You need to link your account first to see further Services</p>
+                <a class="nav-link d-flex align-items-center" href="#">
+                  <i class='icon bx bxs-bell'></i>
+                  Notification
+                </a>
+                <a class="nav-link d-flex align-items-center" href="{% url 'logoff' %}">
+                  <i class='icon bx bxs-log-out''></i> 
+                  Logout
+                </a>
+              </nav>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="col-7 d-flex justify-content-center align-items-center" id="right-side">
+            <div class="d-flex flex-column align-items-center">
+                <i class='bx bxs-message' style="font-size: 10em; color:#d9d9d9;"></i>
+                <h2>Link your account !</h2>
+                <p style="color:white; padding:20px">
+                    To access composting services, register with a composter and link your account. You'll need to
+                    provide personal info and agree to the composter's policies. Once your account is linked, you can
+                    submit your leftovers to the composter you've chosen, subject to the composter's policies.
+                </p>
+                <div style="margin-bottom:100px">
+                    <button type="button" class="btn btn-secondary"><a href="{% url 'greenerRequestComposterLink' %}">Request Compost link</a></button>
+                </div>
+                
+                <h2>Already chosen a composter !</h2>
+                <p style="color:white; padding:20px">
+                    If you have already registered, please wait until we confirm your account. Contact
+                    customer service if you have any questions. It's important to wait for confirmation to ensure access to
+                    all benefits and services provided by the composter.
+                </p>
+                <div>
+                    <button type="button" class="btn btn-primary">Check link Requests</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    {% endblock %}

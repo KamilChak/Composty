@@ -91,18 +91,22 @@ class Blockchain:
         return block
 
 
-    
-
 
 
 blockchain = Blockchain()
 
 
 def display_chain(request):
-    chain = Block.objects.all()
-    context = {'chain': chain}
-    return render(request, 'chain.html', context)
-
+    try:
+        chain = Block.objects.all()
+        if chain:
+            context = {'chain': chain}
+            return render(request, 'chain.html', context)
+        else:
+            return JsonResponse({'message': 'No blocks found.'}, status=200)
+    except Exception as e:
+        error_message = str(e)
+        return JsonResponse({'error': error_message}, status=500)
 
 
 @csrf_exempt

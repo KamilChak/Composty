@@ -1,11 +1,12 @@
 
 from decimal import Decimal
+import json
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from Blockchain.views import Blockchain
 from .forms import ComposterForm, ComposterLoginForm
 from .models import Composter
-from GreenersAccount.models import Greener, Offer
+from GreenersAccount.models import Greener, Offer, GreenerNotifications
 from django.contrib import messages
 #libraries for auth
 from django.contrib.auth.hashers import make_password
@@ -14,6 +15,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.http import JsonResponse
+from django.db.models import Sum,Min,Max
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 def composterSignup(request):
     if request.method == 'POST':
@@ -73,19 +79,23 @@ def composterLogin(request):
 
 @login_required
 def composterHome(request):
-    composter = request.user
-    latitude = composter.Location.y
-    longitude = composter.Location.x
+    if request.user.is_authenticated:
+        composter = request.user
+        latitude = composter.Location.y
+        longitude = composter.Location.x
 
-    greeners = composter.composters.all()
+        greeners = composter.composters.all()
 
-    context = {
-        'composter': composter,
-        'latitude': latitude,
-        'longitude': longitude,
-        'greeners': greeners,
-    }
-    return render(request, 'Composter_home.html', context)
+        context = {
+            'composter': composter,
+            'latitude': latitude,
+            'longitude': longitude,
+            'greeners': greeners,
+        }
+        return render(request, 'Composter_home.html', context)
+
+    else:
+        return redirect('composterHome')
 
 
 @login_required
@@ -95,13 +105,15 @@ def composterCalendar(request):
 
 @login_required
 def composterGreenersRequest(request):
-    offers = Offer.objects.filter(sender__composter=request.user)
+    offers = Offer.objects.filter(sender__composter=request.user).order_by('-id')
+    
     context = {
         'offers': offers
     }
     return render(request, 'greeners_request.html', context)
 
 
+@login_required
 def confirm_offer(request, offer_id):
     offer = get_object_or_404(Offer, pk=offer_id)
     
@@ -126,3 +138,118 @@ def confirm_offer(request, offer_id):
 def logoff(request):
     logout(request)
     return redirect('index')
+
+
+
+
+@login_required
+def GreenersOffers(request):
+    offers = Offer.objects.filter(sender__composter=request.user, confirmed=False).select_related('sender').values('sender_id', 'sender__FirstName', 'sender__LastName', 'sender__Location').annotate(
+        manure=Sum('manure'),
+        green_material=Sum('green_material'),
+        brown_material=Sum('brown_material'),
+        date_range_start=Max('date_range_start'),
+        date_range_end=Min('date_range_end')
+    ).order_by('sender_id')
+
+    GreenersOffersJson = []
+    for offer in offers:
+        GreenersOffersJson.append({
+            'GreenerId': offer['sender_id'],  
+            'GreenerFirstName' : offer['sender__FirstName'],
+            'GreenerLastName': offer['sender__LastName'],
+            'GreenerLocationX': offer['sender__Location'].x,
+            'GreenerLocationY': offer['sender__Location'].y,
+            'manure': offer['manure'],
+            'green_material': offer['green_material'],
+            'brown_material': offer['brown_material'],
+            'date_range_start': offer['date_range_start'],
+            'date_range_end': offer['date_range_end']
+        }) 
+    return JsonResponse({'GreenersOffersJson': GreenersOffersJson})
+
+@login_required
+def getPendingMembers(request):
+    greeners = Greener.objects.filter(composter__id=request.user.id, ComposterStatus='waiting')
+    context = {'greenersArray': greeners}
+    return render(request, 'pending_members.html', context)
+
+@csrf_exempt
+@login_required
+def acceptGreener(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        greener_id = data.get('greenerId')
+        if greener_id is not None:
+            greener = Greener.objects.get(id=greener_id, composter__id=request.user.id, ComposterStatus='waiting')
+            greener.ComposterStatus = 'accepted'
+            greener.save()
+
+            # Create a notification for the greener
+            notification_message = "Congratulations! You have been accepted to "+ request.user.CommunityName +"community."
+            GreenerNotifications.objects.create(greener=greener, Message=notification_message, IsRead = False)
+
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'})
+
+@csrf_exempt
+@login_required
+def rejectGreener(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        greener_id = data.get('greenerId')
+        if greener_id is not None:
+            greener = Greener.objects.get(id=greener_id, composter__id=request.user.id, ComposterStatus='waiting')
+            greener.composter = None
+            greener.save()
+
+             # Create a notification for the greener
+            notification_message = "Unfortunately, your request to Community: " + request.user.CommunityName + "has been rejected !"
+            GreenerNotifications.objects.create(greener=greener, Message=notification_message, IsRead = False)
+            
+            return JsonResponse({'status':'ok'})
+    return JsonResponse({'status': 'error'})
+
+
+
+@login_required
+def getGreenersOffer(request):
+    offers = Offer.objects.filter(Greener__composter=request.user)
+    offersArray = []
+    for offer in offers:
+        offersArray.append({
+            'offerid' : offer.id,
+            'Greener': offer.Greener,  # Use `offer` instead of `Greener`
+            'AnimalManureQuantity': offer.AnimalManureQuantity,  # Use `offer` instead of `CompostOffer`
+            'PlantFertilizersQuantity': offer.PlantFertilizersQuantity,
+            'BiodegradableFertilizersQuantity': offer.BiodegradableFertilizersQuantity,
+            'StartDate': offer.StartDate,
+            'EndDate': offer.EndDate,
+            'Status': offer.Status
+        }) 
+    return render(request , 'greeners_request.html',{'offersArray': offersArray})
+
+
+
+@login_required
+def getComposterMembers(request):
+    membres = Greener.objects.filter(composter__id = request.user.id)
+    context = {'membresArray' : membres}
+    return render(request, 'Composter_members.html', context)
+
+def logoff(request):
+    logout(request)
+    return redirect('index')
+
+
+def checkEmail(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email")
+        print(email)
+
+        # Check if email exists in the Greener table
+        exists = Composter.objects.filter(Email=email).exists()
+        print(exists)
+
+        return JsonResponse({'exists': exists})

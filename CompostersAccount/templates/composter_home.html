@@ -2,19 +2,37 @@
 {% load static %}
 
 
+
+
+
 {% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap" rel="stylesheet">
 
 
 <style>
 
 a {
+    font-family:'Nunito';
     text-decoration: none;
-    color: white;
+    font-size: 1.2em;
+    padding:10px 0;
+    transition: color 0.4s ease;
+    border-radius: 4px;
+    border: 0.2px solid yellow;
+    color: #DEFF99;
+
+}
+
+a:hover {
+    background-color: #DEFF99;
+    transition: color 0.4s ease;
+    color: #857B63;
 }
 
 #left-page {
-    height: 100vh;
     background-color: #857B63;
+    height: 910px;
 }
 
 #left-page div:nth-child(1){
@@ -24,23 +42,65 @@ a {
     margin-bottom: 80px;
 }
 
-#left-page div:nth-child(2), #left-page div:nth-child(3),#left-page div:nth-child(4){
-    border: 1px solid #B7B7B7;
+#left-page div:nth-child(2), #left-page div:nth-child(3),#left-page div:nth-child(4),#left-page div:nth-child(5),#left-page div:nth-child(6){
     width: 90%;
-    padding:10px 0;
+    padding:5px 0;
     margin:10px 0;
-    font-weight: 500;
+}
+
+#left-page div:nth-child(6) a {
+    color: rgb(255, 150, 100);
+    border: 0.2px solid rgb(255, 150, 100);
 }
 
 
+#left-page .icon
+{
+    font-size: 1.3em;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    padding-left: 35px;
+  }
+  
+  .menu a i {
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+
 #right-page {
-    height: 100vh;
     background-color: #FDF7EA;
 }
 
 #map {
-    height: 400px;
-    width: 70%;
+    margin-top: 3%;
+    width: 80%;
+    height: 80%;
+}
+
+.leaflet-control-zoom-in:before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  content: '+';
+}
+
+.leaflet-control-zoom-out:before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  content: '-';
+}
+
+.leaflet-control-zoom a span {
+  display: none;
 }
 
 </style>
@@ -49,59 +109,62 @@ a {
 
 <div class="fluid-container">
 
-
-
     <div class="row">
-
-        <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center" id="left-page">
+        <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
 
             <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
-            <div class="c-greeners-request"><a href="{% url 'composterCalendar' %}">Calendar</a></div>
-            <div class="c-compost-calendar"><a href="{% url 'composterGreenersRequest'%}">Greeners Request</a></div>
-            <div class><a href="{% url 'logoff' %}">Logout</a></div>
-
+            <div class="greeners-calndar"><a href="{% url 'composterHome' %}"><i class="bi bi-house"></i>Dashboard</a></div>
+            <div class="greeners-request"><a href="{% url 'getGreenersOffer'%}"><i class="bi bi-archive-fill"></i>Greeners Requests</a></div>
+            <div class="pending-members"><a href="{% url 'getPendingMembers' %}"><i class="bi bi-person-plus-fill"></i>Pending Members</a></div>
+            <div class="mb-5 c-greeners-request"><a href="{% url 'getComposterMembers' %}"><i class="bi bi-people-fill"></i>My Members</a></div>
+            <div class="mt-5"><a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a></div>
+        
         </div>
     
 
         <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center " id="right-page">
-            <div>{{composter.CommunityName}}</div>
+            <!--<div>{{composter.CommunityName}}</div>-->
             <div id="map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-greeners="{{ greeners_json }}"></div>
-
-            
-            <div class="d-flex flex-column align-items-center justify-content-center">
-                <p>Compost Request : </p>
-                <p>Dechet Vert : </p>
-                <p>Dechet Sec : </p>
-                <p>Dechet fumier : </p>
-                <p>Total : </p>
-            </div>
         </div>
 
     </div>
 
-
-
-
 </div>
 
-
-
 <script>
-    var latitude = parseFloat(document.getElementById('map').getAttribute('data-latitude'));
-    var longitude = parseFloat(document.getElementById('map').getAttribute('data-longitude'));
 
-    var map = L.map('map').setView([latitude, longitude], 13);
+var latitude = parseFloat(
+    document.getElementById("map").getAttribute("data-latitude")
+  );
+  var longitude = parseFloat(
+    document.getElementById("map").getAttribute("data-longitude")
+  );
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  var map = L.map("map").setView([latitude, longitude], 10);
 
-    L.marker([latitude, longitude]).addTo(map)
-        .bindPopup('Your location')
-        .openPopup();
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
 
 
-    
+  var customIcon = L.icon({
+        iconUrl: '{% static "images/bag_icon.png" %}',
+        iconSize: [56, 56],
+    });
+
+    fetch('/Composter/offers_data/')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.GreenersOffersJson);
+        
+        // Loop through the JSON data and create a marker for each location
+        data.GreenersOffersJson.forEach(offer => {
+            const marker = L.marker([offer.GreenerLocationY, offer.GreenerLocationX], { icon: customIcon }).addTo(map);
+            marker.bindPopup(`Name: ${offer.GreenerFirstName} ${offer.GreenerLastName}<br>Animal Manure Quantity: ${offer.manure} Kg<br>Green Material Quantity: ${offer.green_material} Kg<br>Brown Material Quantity: ${offer.brown_material} Kg<br>Start Date: ${offer.date_range_start}<br>End Date: ${offer.date_range_end}`);
+        });
+    })
+    .catch(error => console.error(error));
+
+
 </script>
-
 {% endblock %}

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-
+import json
+from Blockchain.models import Transaction
 from Blockchain.views import Blockchain
 from .forms import CompostOfferForm, GreenerForm, GreenerLoginForm
-from .models import Greener, Offer
+from .models import Greener, Offer, GreenerNotifications
 from CompostersAccount.models import Composter
 from django.http import JsonResponse
 from django.contrib.gis.geos import Point
@@ -70,7 +71,10 @@ def greenerLogin(request):
                 else:
                     # Authenticate the user and redirect to the home page
                     login(request, user)
-                    return redirect('greenerHome')
+                    if request.user.ComposterStatus == 'waiting':
+                        return redirect('greenerHomeChooseComposter')
+                    else:
+                        return redirect('greenerHome')
             else:
                 # Authentication failed, show an error message
                 messages.error(request, 'Invalid email or password.')
@@ -86,17 +90,11 @@ def greenerLogin(request):
 def greenerHome(request):
     
     user = request.user
-    offers = Offer.objects.filter(sender=user)
-
-    offer_data = []
-
-    for offer in offers:
-        offer_sum = offer.manure + offer.brown_material + offer.green_material
-        offer_data.append({'offer': offer, 'sum': offer_sum})
+    transactions = Transaction.objects.filter(recipient=user)
 
     context = {
             'user': user,
-            'offer_data': offer_data,
+            'transactions': transactions,
             }
     return render(request, 'Greener_home.html', context)
 
@@ -107,9 +105,11 @@ def greenerHome(request):
 def getClosestComposters(request):
     UserLocationWKT = request.GET.get('UserLocation')
     UserLocationWKB = GEOSGeometry(UserLocationWKT)
-    point = Point(UserLocationWKB.x,UserLocationWKB.y, srid=4326)
+    point = Point(UserLocationWKB.x, UserLocationWKB.y, srid=4326)
     
-    composters = Composter.objects.filter(Location__distance_lte=(point, 10000)).annotate(distance=Distance('Location', point)).order_by('distance')
+    radius = request.GET.get('Radius', 10000)
+    radius = float(radius)*1000
+    composters = Composter.objects.filter(Location__distance_lte=(point, radius)).annotate(distance=Distance('Location', point)).order_by('distance')
 
     closest_composters = []
     for composter in composters:
@@ -156,7 +156,7 @@ def compostOffer(request):
 def sentRequests(request):
 
     user = request.user
-    offers = Offer.objects.filter(sender=user)
+    offers = Offer.objects.filter(sender=user).order_by('-id')
 
     context = {
         'offers': offers
@@ -168,3 +168,60 @@ def sentRequests(request):
 def logoff(request):
     logout(request)
     return redirect('index')
+
+
+
+@login_required
+def greenerHomeChooseComposter(request):
+    if request.user.ComposterStatus == 'accepted':
+        return redirect('greenerHome')
+    else:
+        return render(request, 'Greener_home_choose_composter.html')
+    
+
+
+@login_required
+def greenerRequestComposterLink(request):
+    context = {'user' : request.user}
+    if request.user.ComposterStatus == 'accepted':
+        return redirect('greenerHome')
+    else:
+        return render(request, 'Greener_request_composter_link.html', context)
+    
+
+
+@csrf_exempt
+@login_required
+def updateComposter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        greener_id = data.get('greenerId')
+        composter_id = data.get('composterId')
+        if composter_id is not None:
+            composter = Composter.objects.get(id=composter_id)
+            greener = Greener.objects.get(id=greener_id)
+            greener.composter = composter
+            greener.save()
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'})
+
+
+@login_required
+def greenerNotification(request):
+    notifications = GreenerNotifications.objects.filter(greener__id=request.user.id, IsRead=False).order_by('-Timestamp')
+    context = {'notificationsArray': notifications}
+
+    return render(request, 'Greener_notification.html', context)
+
+
+def checkEmail(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email")
+        print(email)
+
+        # Check if email exists in the Greener table
+        exists = Greener.objects.filter(Email=email).exists()
+        print(exists)
+
+        return JsonResponse({'exists': exists})

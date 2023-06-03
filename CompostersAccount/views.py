@@ -35,7 +35,6 @@ def composterSignup(request):
             
             # create a new Composter object with the cleaned form data
             composter = Composter.objects.create(OrganizationName=organization_name, CommunityName=community_name, Email=email, password=password, PhoneNumber=phone_number, Location=location)
-            composter.save()
 
             blockchain = Blockchain()
 
@@ -128,23 +127,32 @@ def confirm_offer(request, offer_id):
     offer.sender.wallet += amount
     offer.sender.save()
 
-    offer.confirmed = True
+    offer.Status = 'completed'
     offer.save()
+
+    notification_message = request.user.CommunityName + " has accepted your offer! You gained " + str(amount) + " Compo Coins!"
+    GreenerNotifications.objects.create(greener=offer.sender, Message=notification_message)
 
     return redirect('composterGreenersRequest')
 
 
 
-def logoff(request):
-    logout(request)
-    return redirect('index')
+@login_required
+def decline_offer(request, offer_id):
+    offer = get_object_or_404(Offer, pk=offer_id)
 
+    offer.Status = 'declined'
+    offer.save()
 
+    notification_message = "Unfortunatly, " + request.user.CommunityName + " has declined your offer"
+    GreenerNotifications.objects.create(greener=offer.sender, Message=notification_message)
+
+    return redirect('composterGreenersRequest')
 
 
 @login_required
 def GreenersOffers(request):
-    offers = Offer.objects.filter(sender__composter=request.user, confirmed=False).select_related('sender').values('sender_id', 'sender__FirstName', 'sender__LastName', 'sender__Location').annotate(
+    offers = Offer.objects.filter(sender__composter=request.user, Status='pending').select_related('sender').values('sender_id', 'sender__FirstName', 'sender__LastName', 'sender__Location').annotate(
         manure=Sum('manure'),
         green_material=Sum('green_material'),
         brown_material=Sum('brown_material'),
@@ -168,11 +176,13 @@ def GreenersOffers(request):
         }) 
     return JsonResponse({'GreenersOffersJson': GreenersOffersJson})
 
+
 @login_required
 def getPendingMembers(request):
-    greeners = Greener.objects.filter(composter__id=request.user.id, ComposterStatus='waiting')
+    greeners = Greener.objects.filter(composter=request.user, ComposterStatus='waiting')
     context = {'greenersArray': greeners}
     return render(request, 'pending_members.html', context)
+
 
 @csrf_exempt
 @login_required
@@ -187,10 +197,11 @@ def acceptGreener(request):
 
             # Create a notification for the greener
             notification_message = "Congratulations! You have been accepted to "+ request.user.CommunityName +"community."
-            GreenerNotifications.objects.create(greener=greener, Message=notification_message, IsRead = False)
+            GreenerNotifications.objects.create(greener=greener, Message=notification_message)
 
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'})
+
 
 @csrf_exempt
 @login_required
@@ -205,7 +216,7 @@ def rejectGreener(request):
 
              # Create a notification for the greener
             notification_message = "Unfortunately, your request to Community: " + request.user.CommunityName + "has been rejected !"
-            GreenerNotifications.objects.create(greener=greener, Message=notification_message, IsRead = False)
+            GreenerNotifications.objects.create(greener=greener, Message=notification_message)
             
             return JsonResponse({'status':'ok'})
     return JsonResponse({'status': 'error'})
@@ -219,12 +230,12 @@ def getGreenersOffer(request):
     for offer in offers:
         offersArray.append({
             'offerid' : offer.id,
-            'Greener': offer.Greener,  # Use `offer` instead of `Greener`
-            'AnimalManureQuantity': offer.AnimalManureQuantity,  # Use `offer` instead of `CompostOffer`
-            'PlantFertilizersQuantity': offer.PlantFertilizersQuantity,
-            'BiodegradableFertilizersQuantity': offer.BiodegradableFertilizersQuantity,
-            'StartDate': offer.StartDate,
-            'EndDate': offer.EndDate,
+            'Greener': offer.sender,  # Use `offer` instead of `Greener`
+            'manure': offer.manure,  # Use `offer` instead of `CompostOffer`
+            'brown_material': offer.brown_material,
+            'green_material': offer.green_material,
+            'date_range_start': offer.date_range_start,
+            'date_range_end': offer.date_range_end,
             'Status': offer.Status
         }) 
     return render(request , 'greeners_request.html',{'offersArray': offersArray})
@@ -233,9 +244,10 @@ def getGreenersOffer(request):
 
 @login_required
 def getComposterMembers(request):
-    membres = Greener.objects.filter(composter__id = request.user.id)
-    context = {'membresArray' : membres}
+    members = Greener.objects.filter(composter = request.user, ComposterStatus='accepted')
+    context = {'membersArray' : members}
     return render(request, 'Composter_members.html', context)
+
 
 def logoff(request):
     logout(request)

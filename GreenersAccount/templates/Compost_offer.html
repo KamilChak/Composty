@@ -49,16 +49,17 @@
   #left-page div:nth-child(2),
   #left-page div:nth-child(3),
   #left-page div:nth-child(4),
-  #left-page div:nth-child(5) {
+  #left-page div:nth-child(5),
+  #left-page div:nth-child(6){
     width: 90%;
-    padding: 5px 0;
-    margin: 10px 0;
+    padding:5px 0;
+    margin:10px 0;
   }
 
-  #left-page div:nth-child(5) a {
+#left-page div:nth-child(6) a {
     color: rgb(255, 150, 100);
     border: 0.2px solid rgb(255, 150, 100);
-  }
+}
 
   #left-page .icon {
     font-size: 1.3em;
@@ -115,6 +116,11 @@
       </div>
       <div class="c-greeners-dashboard">
         <a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i></i>Dashboard</a>
+      </div>
+      <div class="c-greeners-notifications">
+        <a href="{% url 'greenerNotification' %}">
+          <i class="bi bi-bell"></i>Notifications<span class="badge bg-danger">{{notif}}</span>
+        </a>
       </div>
       <div class="c-greeners-submit">
         <a href="{% url 'compostOffer' %}"><i class="bi bi-arrow-right-square"></i>Submit Compost</a>

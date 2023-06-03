@@ -39,12 +39,12 @@ def greenerSignup(request):
              
             # create a new Greener object with the cleaned form data
             greener = Greener.objects.create(FirstName=first_name, LastName=last_name, Email=email, password=password, PhoneNumber=phone_number, Location = location, composter = composterObject)
-            greener.save()
 
             blockchain = Blockchain()
 
             user_url = request.build_absolute_uri('/')[:-1]
             blockchain.add_node(user_url, greener)
+            
             # redirect to the success page
             return redirect('/')  # or any other success page
     else:
@@ -92,9 +92,12 @@ def greenerHome(request):
     user = request.user
     transactions = Transaction.objects.filter(recipient=user)
 
+    notif = GreenerNotifications.objects.filter(greener=user).count()
+
     context = {
             'user': user,
             'transactions': transactions,
+            'notif': notif,
             }
     return render(request, 'Greener_home.html', context)
 
@@ -145,9 +148,15 @@ def compostOffer(request):
     else:
         form = CompostOfferForm()
 
+    user = request.user
+
+    notif = GreenerNotifications.objects.filter(greener=user).count()
+
     composts = Compost.objects.all()
     context = {'composts': composts,
-               'form': form}
+               'form': form,
+               'notif': notif,
+               }
     return render(request, 'Compost_offer.html', context)
 
 
@@ -158,8 +167,11 @@ def sentRequests(request):
     user = request.user
     offers = Offer.objects.filter(sender=user).order_by('-id')
 
+    notif = GreenerNotifications.objects.filter(greener=user).count()
+
     context = {
-        'offers': offers
+        'offers': offers,
+        'notif': notif,
     }
     return render(request, 'greeners_requests.html', context)
 
@@ -208,7 +220,7 @@ def updateComposter(request):
 
 @login_required
 def greenerNotification(request):
-    notifications = GreenerNotifications.objects.filter(greener__id=request.user.id, IsRead=False).order_by('-Timestamp')
+    notifications = GreenerNotifications.objects.filter(greener__id=request.user.id).order_by('-Timestamp')
     context = {'notificationsArray': notifications}
 
     return render(request, 'Greener_notification.html', context)

@@ -46,13 +46,17 @@
     margin-bottom: 80px;
 }
 
-#left-page div:nth-child(2), #left-page div:nth-child(3),#left-page div:nth-child(4), #left-page div:nth-child(5){
+#left-page div:nth-child(2),
+#left-page div:nth-child(3),
+#left-page div:nth-child(4),
+#left-page div:nth-child(5),
+#left-page div:nth-child(6){
     width: 90%;
     padding:5px 0;
     margin:10px 0;
 }
 
-#left-page div:nth-child(5) a {
+#left-page div:nth-child(6) a {
     color: rgb(255, 150, 100);
     border: 0.2px solid rgb(255, 150, 100);
 }
@@ -95,6 +99,11 @@
 
             <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
             <div class="c-greeners-dashboard"><a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i>Dashboard</a></div>
+            <div class="c-greeners-notifications">
+                <a href="{% url 'greenerNotification' %}">
+                    <i class="bi bi-bell"></i>Notifications<span class="badge bg-danger">{{notif}}</span>
+                </a>
+              </div>
             <div class="c-greeners-submit"><a href="{% url 'compostOffer' %}"><i class='bi bi-arrow-right-square'></i>Submit Compost</a></div>
             <div class="c-greeners-request"><a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a></div>
             <div class="mt-5"><a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a></div>
@@ -126,10 +135,12 @@
                                 <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_start }}</div>
                                 <div class="col" style="font-size: 1.1rem;">{{ offer.date_range_end }}</div>
                                 <div class="col" style="font-size: 1.1rem;">
-                                    {% if offer.confirmed %}
+                                    {% if offer.Status == 'completed' %}
                                         <i class="bi bi-check-circle-fill text-success"></i>
-                                    {% else %}
+                                    {% elif offer.Status == 'declined' or offer.Status == 'expired' %}
                                         <i class="bi bi-x-circle-fill text-danger"></i>
+                                    {% elif offer.Status == 'pending' %}
+                                        <i class="bi bi-three-dots"></i>
                                     {% endif %}
                                 </div>
                             </div>

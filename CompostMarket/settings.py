@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+
     'CompostersAccount',
     'GreenersAccount',
     'CompostItem',
@@ -80,7 +81,9 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'CompostMarket.wsgi.application'
+
 
 if os.name == 'nt':
     VENV_BASE = os.environ['VIRTUAL_ENV']
@@ -156,5 +159,3 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = ['CompostersAccount.backends.ComposterAuthBackend', 'GreenersAccount.backends.GreenerAuthBackend', 'django.contrib.auth.backends.ModelBackend']
-
-

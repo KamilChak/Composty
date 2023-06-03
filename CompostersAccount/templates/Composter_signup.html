@@ -120,6 +120,7 @@
                     {{ form.PhoneNumber }}
                 </div>
                 {{ form.Location }}
+                <div id="alert-container"></div>
 
 
                 <div class="col-12  d-flex justify-content-center align-items-center">
@@ -153,16 +154,29 @@
 
 <script>
 
-    var form = document.getElementById('composter-form');
-    var nextPickLocationButton = document.getElementById('next-pick-location');
-    var pickLocationMap = document.getElementById('pick-location-map');
-    var goBackFillFormButton = document.getElementById('go-back-fill-form');
+    const form = document.getElementById('composter-form');
+    const nextPickLocationButton = document.getElementById('next-pick-location');
+    const pickLocationMap = document.getElementById('pick-location-map');
+    const goBackFillFormButton = document.getElementById('go-back-fill-form');
+    const alertContainer = document.getElementById("alert-container");
+
+
     
-    nextPickLocationButton.addEventListener('click', function() {
+    document.querySelector('form').addEventListener('keydown', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault(); 
+        }
+      });
+    
+    nextPickLocationButton.addEventListener('click', async function () {
         // Hide the form and show the pick location map page
+        if( await validateForm())
+        {
         form.style.display = 'none';
         pickLocationMap.style.display = 'block';
         map.invalidateSize();
+        alertContainer.style.display = 'none';
+        }
     });
 
     
@@ -170,6 +184,8 @@
         // Show the form and hide the pick location map page
         pickLocationMap.style.display = 'none';
         form.style.display = 'flex';
+        alertContainer.style.display = 'block';
+        alertContainer.innerHTML="";
     });
 
 
@@ -215,6 +231,109 @@
     map.on('dblclick', function(e) {
         addMarker(e.latlng);
     });
+
+
+    //form validator
+    
+
+    function showAlert(message, type) {
+        const alertTemplate = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+        alertContainer.innerHTML = alertTemplate;
+    }
+
+
+    async function checkEmail() {
+        const email = document.getElementById("email").value;
+      
+        try {
+          const response = await fetch("/Composter/checkEmail/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({ 'email': email })
+          });
+      
+          const data = await response.json();
+      
+          if (data.exists) {
+            console.log("exist");
+            return true;
+          } else {
+            console.log("does not exist");
+            return false;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          return false;
+        }
+      }
+
+
+    async function validateForm() {
+        const organizationName = document.getElementById("organization-name");
+        const communityName = document.getElementById("community-name");
+        const password = document.getElementById("password");
+        const phoneNumber = document.getElementById("phone-number");
+        const email = document.getElementById("email");
+    
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        const phoneNumberRegex = /^(2|5|7|9)\d{7}$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+        let isValid = true;
+    
+    
+        if (!phoneNumberRegex.test(phoneNumber.value)) {
+            showAlert("Invalid phone number.", "danger");
+            phoneNumber.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            phoneNumber.classList.remove("is-invalid");
+        }
+
+        if (!password.value) {
+            showAlert("Password cannot be empty.", "danger");
+            password.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            password.classList.remove("is-invalid");
+          }
+    
+        if (!emailRegex.test(email.value) || await checkEmail()) {
+            console.log(checkEmail())
+            showAlert("Invalid email or email already exists.", "danger");
+            email.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            email.classList.remove("is-invalid");
+        }
+
+        if (!communityName.value || !nameRegex.test(communityName.value)) {
+            showAlert("Community name cannot be empty and should not contain special characters.", "danger");
+            communityName.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            communityName.classList.remove("is-invalid");
+        }
+
+        if (!organizationName.value || !nameRegex.test(organizationName.value)) {
+            showAlert("Organization name cannot be empty and should not contain special characters.", "danger");
+            organizationName.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            organizationName.classList.remove("is-invalid");
+        }
+    
+    
+        return isValid;
+    }
 
 </script>
 

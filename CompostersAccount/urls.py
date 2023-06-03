@@ -8,6 +8,7 @@ urlpatterns = [
     path('calendar/', views.composterCalendar, name="composterCalendar"),
     path('GreenersRequest/', views.composterGreenersRequest, name='composterGreenersRequest'),
     path('confirm_offer/<int:offer_id>/', views.confirm_offer, name='confirm_offer'),
+    path('decline_offer/<int:offer_id>/', views.decline_offer, name='decline_offer'),
     path('logout/', views.logoff , name='logoff'),
     path('getPendingMembers/', views.getPendingMembers, name="getPendingMembers"),
     path('accept_greener/',views.acceptGreener, name='acceptGreener'),

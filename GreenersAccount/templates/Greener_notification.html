@@ -110,12 +110,11 @@
 
         {% for notification in notificationsArray %}
         <div class="card">
-            <div class="card-header">
+            <div class="card-header fw-bold">
               {{ notification.Timestamp }}
             </div>
             <div class="card-body">
-              <h5 class="card-title">notification</h5>
-              <p class="card-text">{{ notification.Message }}</p>
+              <p class="card-text fw-bold">{{ notification.Message }}</p>
               <a href="#" class="btn btn-primary">Mark as read</a>
             </div>
           </div>
@@ -148,7 +147,7 @@
             View History
         </a>
         <a class="nav-link d-flex align-items-center" href="{% url 'logoff' %}">
-            <i class='icon bx bxs-log-out''></i> 
+            <i class='icon bx bxs-log-out'></i> 
     Logout
   </a>
 </nav>

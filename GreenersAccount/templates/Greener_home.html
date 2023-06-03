@@ -4,10 +4,8 @@
 {% block title %}Home{%endblock %}
 
 {% block content %}
-<link
-  href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap"
-  rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap" rel="stylesheet"/>
+<script src="https://kit.fontawesome.com/5135d630a7.js" crossorigin="anonymous"></script>
 
 <style>
   a {
@@ -51,13 +49,14 @@
   #left-page div:nth-child(2),
   #left-page div:nth-child(3),
   #left-page div:nth-child(4),
-  #left-page div:nth-child(5) {
+  #left-page div:nth-child(5),
+  #left-page div:nth-child(6) {
     width: 90%;
     padding: 5px 0;
     margin: 10px 0;
   }
 
-  #left-page div:nth-child(5) a {
+  #left-page div:nth-child(6) a {
     color: rgb(255, 150, 100);
     border: 0.2px solid rgb(255, 150, 100);
   }
@@ -131,35 +130,117 @@
     font-size: larger;
     line-height: 200%;
   }
+
+  .notification {
+    color: gray;
+    text-decoration: none;
+    padding: 10px;
+    margin-right: 20px;
+    margin-left: 20px;
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    width: 90px;
+    height: 90px;
+    line-height: 90px;
+    text-align: center;
+    border:  none;
+  }
+  
+  .notification .badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    padding: 8px 8px;
+    border-radius: 50%;
+    background: red;
+    color: white;
+  }
+  
+  .notification-section .dropdown-toggle::after {
+    content: none;
+  }
+  
+  .dropdown-toggle::after {
+    color: #fff;
+  }
+  
+  #notifications-dropdown li {
+    max-width: 500px;
+    word-wrap: break-word;
+    display: inline-block;
+    white-space: normal;
+  }
+  
+  #notifications-dropdown.dropdown-menu {
+    width: 15rem;
+  }
+  
+  .nav-item {
+    list-style: none;
+  }
+  
+  @keyframes ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(30deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  
+  .notification-icon {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .notification-icon .fa {
+    color: gray;
+    font-size: 4em;
+  }
+  
+  .notification-icon.ringing .fa {
+    animation: ring 0.5s ease-in-out infinite;
+  }
+
 </style>
 
 <div class="fluid-container">
   <div class="row">
-    <div
-      class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu"
-      id="left-page"
-    >
+    <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
+
       <div class="logo">
         <img src="{% static 'images/composter_logo.svg' %}"/>
       </div>
+
       <div class="c-greeners-dashboard">
         <a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i>Dashboard</a>
       </div>
+
+      <div class="c-greeners-notifications">
+        <a href="{% url 'greenerNotification' %}">
+          <i class="bi bi-bell"></i>Notifications<span class="badge bg-danger">{{notif}}</span>
+        </a>
+      </div>
+
       <div class="c-greeners-submit">
         <a href="{% url 'compostOffer' %}"><i class="bi bi-arrow-right-square"></i>Submit Compost</a>
       </div>
+
       <div class="c-greeners-request">
         <a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a>
       </div>
+
       <div class="mt-5">
         <a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a>
       </div>
+      
     </div>
 
-    <div
-      class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center"
-      id="right-page"
-    >
+    <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
       <!-- https://icon-library.com/icon/compost-icon-19.html.html>Compost Icon # 140196 -->
       <div class="coin-logo">
         <img src="{% static 'images/coin-logo.png' %}" alt="Logo" />
@@ -178,8 +259,36 @@
         </li>
         {% endfor %}
       </ul>
+      
+      <div class="position-fixed bottom-0 end-0 p-3">
+        <li class="nav-item dropdown notification-section">
+          <a href="#" class="notification dropdown-toggle" id="navbarDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="true">
+            <span class="notification-icon">
+              <i class="fa fa-bell"></i>
+            </span>
+            <span class="badge" id="notification-badge">0</span>
+          </a>
+        </li>
+      </div>
+          
+
     </div>
   </div>
 </div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var badge = document.getElementById("notification-badge");
+    var bellIcon = document.querySelector(".notification-icon");
+
+    if (badge && badge.textContent !== "0") {
+      bellIcon.classList.add("ringing");
+    }
+    
+  });
+
+</script>
 
 {% endblock %}

@@ -26,4 +26,4 @@ admin.site.register(Greener, GreenerAdmin)
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'manure', 'brown_material', 'green_material', 'date_range_start', 'date_range_end', 'confirmed')
+    list_display = ('id', 'sender', 'manure', 'brown_material', 'green_material', 'date_range_start', 'date_range_end', 'Status')

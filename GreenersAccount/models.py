@@ -5,6 +5,7 @@ from django.contrib.gis.db import models as gis_models
 from CompostersAccount.models import Composter
 
 
+
 class GreenerManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -19,6 +20,7 @@ class GreenerManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
+
 
 
 class Greener(AbstractBaseUser, PermissionsMixin):
@@ -52,22 +54,30 @@ class Greener(AbstractBaseUser, PermissionsMixin):
 
     
 
-
 class Offer(models.Model):
+    
+    
+    STATUS_CHOICES = (
+        ('completed', 'Completed'),
+        ('pending', 'Pending'),
+        ('declined', 'Declined'),
+        ('expired', 'Expired')
+    )
+
     sender = models.ForeignKey(Greener, on_delete=models.CASCADE)
     manure = models.FloatField()
     brown_material = models.FloatField()
     green_material = models.FloatField()
     date_range_start = models.DateField()
     date_range_end = models.DateField()
-    confirmed = models.BooleanField(default=False)
+    Status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
 
 
 class GreenerNotifications(models.Model):
     greener = models.ForeignKey(Greener, on_delete=models.CASCADE, related_name='greener')
     Message = models.CharField(max_length=255)
     Timestamp = models.DateTimeField(auto_now_add=True)
-    IsRead = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-Timestamp']

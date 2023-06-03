@@ -24,31 +24,35 @@
     }
 
     #left-page {
-        background-color: #857B63;
-        flex: 1 1 auto;
-    }
+    background-color: #857b63;
+    flex: 1 1 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    #left-page div:nth-child(1) {
-        width: 90%;
-        padding: 5px;
-        margin-top: 120px;
-        margin-bottom: 80px;
-    }
+    #left-page div:nth-child(1){
+    width: 90%;
+    padding: 5px;
+    margin-top: 120px;
+    margin-bottom: 80px;
+}
 
-    #left-page div:nth-child(2),
-    #left-page div:nth-child(3),
-    #left-page div:nth-child(4),
-    #left-page div:nth-child(5),
-    #left-page div:nth-child(6) {
-        width: 90%;
-        padding: 5px 0;
-        margin: 10px 0;
-    }
+#left-page div:nth-child(2),
+#left-page div:nth-child(3),
+#left-page div:nth-child(4),
+#left-page div:nth-child(5),
+#left-page div:nth-child(6){
+    width: 90%;
+    padding:5px 0;
+    margin:10px 0;
+}
 
-    #left-page div:nth-child(6) a {
-        color: rgb(255, 150, 100);
-        border: 0.2px solid rgb(255, 150, 100);
-    }
+#left-page div:nth-child(6) a {
+    color: rgb(255, 150, 100);
+    border: 0.2px solid rgb(255, 150, 100);
+}
 
     #left-page .icon {
         font-size: 1.3em;
@@ -72,12 +76,11 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100%;
         overflow-y: auto;
     }
 
     .heading-size {
-        font-size: 4rem;
+        font-size: 3rem;
     }
 
 
@@ -135,12 +138,17 @@
                                 {{ offer.date_range_end }}
                             </div>
                             <div class="col text-center" style="font-size: 1.1rem">
-                                {% if not offer.confirmed %}
-                                <a href="{% url 'confirm_offer' offer.id %}" class="btn btn-success"
-                                    title="Confirm Offer">
-                                    <i class="bi bi-check-circle"></i> Confirm</a>
-                                {% else %}
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                                {% if offer.Status == 'pending' %}
+                                <a href="{% url 'confirm_offer' offer.id %}" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i>
+                                </a>
+                                <a href="{% url 'decline_offer' offer.id %}" class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                                {% elif offer.Status == 'completed' %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% elif offer.Status == 'declined' %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
                                 {% endif %}
                             </div>
                         </div>

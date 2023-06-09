@@ -12,6 +12,7 @@ urlpatterns = [
     path('GreenerHomeChooseComposter/', views.greenerHomeChooseComposter, name='greenerHomeChooseComposter'),
     path('GreenerRequestComposterLink/', views.greenerRequestComposterLink, name='greenerRequestComposterLink'),
     path('GreenerNotification', views.greenerNotification, name='greenerNotification'),
+    path('deleteNotification/<int:notif_id>/', views.deleteNotification, name='deleteNotification'),
     path('update_composter/', views.updateComposter, name ='updateComposter'),
     path('checkEmail/', views.checkEmail, name="checkEmail"),
 ]

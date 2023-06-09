@@ -1,90 +1,10 @@
-{% extends 'composter_Base.html' %} {% load static %} {% block content %}
+{% extends 'composter_Base.html' %}
 
-<style>
-    a {
-        text-decoration: none;
-        font-size: 1.2em;
-        padding: 10px 0;
-        transition: color 0.4s ease;
-        border-radius: 4px;
-        border: 0.2px solid yellow;
-        color: #DEFF99;
+{% load static %}
 
-    }
+{% block title %}Requests{% endblock %}
 
-    a:hover {
-        background-color: #DEFF99;
-        transition: color 0.4s ease;
-        color: #857B63;
-    }
-
-    .row {
-        display: flex;
-        position: relative;
-    }
-
-    #left-page {
-    background-color: #857b63;
-    flex: 1 1 auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-    #left-page div:nth-child(1){
-    width: 90%;
-    padding: 5px;
-    margin-top: 120px;
-    margin-bottom: 80px;
-}
-
-#left-page div:nth-child(2),
-#left-page div:nth-child(3),
-#left-page div:nth-child(4),
-#left-page div:nth-child(5),
-#left-page div:nth-child(6){
-    width: 90%;
-    padding:5px 0;
-    margin:10px 0;
-}
-
-#left-page div:nth-child(6) a {
-    color: rgb(255, 150, 100);
-    border: 0.2px solid rgb(255, 150, 100);
-}
-
-    #left-page .icon {
-        font-size: 1.3em;
-    }
-
-    .menu a {
-        display: flex;
-        align-items: center;
-        padding-left: 35px;
-    }
-
-    .menu a i {
-        font-family: 'Nunito';
-        margin-right: 5px;
-        vertical-align: middle;
-    }
-
-    #right-page {
-        background-color: #FDF7EA;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        overflow-y: auto;
-    }
-
-    .heading-size {
-        font-size: 3rem;
-    }
-
-
-</style>
+{% block content %}
 
 <div class="fluid-container">
     <div class="row">
@@ -102,7 +22,7 @@
         <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
             <div class="container">
                 <div class="col text-center">
-                    <h1 class="my-4 heading-size">Received Offers</h1>
+                    <h1 class="my-4 display-5 fw-bold">Received Offers</h1>
                 </div>
                 <ul class="list-group mt-5">
                     <li class="list-group-item list-group-item-dark text-center">
@@ -140,7 +60,7 @@
                             <div class="col text-center" style="font-size: 1.1rem">
                                 {% if offer.Status == 'pending' %}
                                 <a href="{% url 'confirm_offer' offer.id %}" class="btn btn-success">
-                                <i class="bi bi-check-circle"></i>
+                                    <i class="bi bi-check-circle"></i>
                                 </a>
                                 <a href="{% url 'decline_offer' offer.id %}" class="btn btn-danger">
                                     <i class="bi bi-x-circle"></i>
@@ -159,7 +79,5 @@
         </div>
     </div>
 </div>
-
-<script></script>
 
 {% endblock %}

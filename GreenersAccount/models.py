@@ -56,7 +56,6 @@ class Greener(AbstractBaseUser, PermissionsMixin):
 
 class Offer(models.Model):
     
-    
     STATUS_CHOICES = (
         ('completed', 'Completed'),
         ('pending', 'Pending'),

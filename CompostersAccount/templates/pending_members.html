@@ -1,94 +1,14 @@
 {% extends 'composter_Base.html' %}
 {% load static %}
 
-{% block content %}
+{% block title %}Pending Members{% endblock %}
 
+{% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap" rel="stylesheet">
 
-
 <style>
-    a {
-        font-family: 'Nunito';
-        text-decoration: none;
-        font-size: 1.2em;
-        padding: 10px 0;
-        transition: color 0.4s ease;
-        border-radius: 4px;
-        border: 0.2px solid yellow;
-        color: #DEFF99;
-
-    }
-
-    a:hover {
-        background-color: #DEFF99;
-        transition: color 0.4s ease;
-        color: #857B63;
-    }
-
-    .row {
-        display: flex;
-        position: relative;
-    }
-
-    #left-page {
-        background-color: #857b63;
-        flex: 1 1 auto;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    #left-page div:nth-child(1) {
-        width: 90%;
-        padding: 5px;
-        margin-top: 120px;
-        margin-bottom: 80px;
-    }
-
-    #left-page div:nth-child(2),
-    #left-page div:nth-child(3),
-    #left-page div:nth-child(4),
-    #left-page div:nth-child(5),
-    #left-page div:nth-child(6) {
-        width: 90%;
-        padding: 5px 0;
-        margin: 10px 0;
-    }
-
-    #left-page div:nth-child(6) a {
-        color: rgb(255, 150, 100);
-        border: 0.2px solid rgb(255, 150, 100);
-    }
-
-
-    #left-page .icon {
-        font-size: 1.3em;
-    }
-
-    .menu a {
-        display: flex;
-        align-items: center;
-        padding-left: 35px;
-    }
-
-    .menu a i {
-        margin-right: 5px;
-        vertical-align: middle;
-    }
-
-
-    #right-page {
-        min-height: 100vh;
-        background-color: #FDF7EA;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        overflow-y: auto;
-    }
-
+    
     .table {
         width: 80%;
         max-height: 100%;
@@ -101,9 +21,8 @@
 
 <div class="fluid-container">
 
-
-
     <div class="row">
+
         <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
 
             <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
@@ -151,13 +70,11 @@
 
     </div>
 
-
-
-
 </div>
 
 
 <script>
+    
     function acceptGreener(greenerId) {
         fetch('/Composter/accept_greener/', {
             method: 'POST',

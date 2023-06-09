@@ -10,6 +10,8 @@ from .models import Block, Node, Transaction
 from django.db.utils import ProgrammingError
 
 
+# Huge thanks to 'Mohammed Gumma' for providing the basic blockchain layout
+# https://medium.com/@MKGOfficial/build-a-simple-blockchain-cryptocurrency-with-python-django-web-framework-reactjs-f1aebd50b6c
 
 class Blockchain:
     def __init__(self):

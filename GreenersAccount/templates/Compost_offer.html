@@ -5,93 +5,14 @@
 
 {% block content %}
 
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400&display=swap" rel="stylesheet"/>
-
 <style>
-  a {
-    font-family: "Nunito";
-    text-decoration: none;
-    font-size: 1.2em;
-    padding: 10px 0;
-    transition: color 0.4s ease;
-    border-radius: 4px;
-    border: 0.2px solid yellow;
-    color: #deff99;
-  }
-
-  a:hover {
-    background-color: #deff99;
-    transition: color 0.4s ease;
-    color: #857b63;
-  }
-
-  .row {
-    display: flex;
-    position: relative;
-  }
-
-  #left-page {
-    background-color: #857b63;
-    flex: 1 1 auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #left-page div:nth-child(1) {
-    width: 90%;
-    padding: 5px;
-    margin-top: 120px;
-    margin-bottom: 80px;
-  }
-
-  #left-page div:nth-child(2),
-  #left-page div:nth-child(3),
-  #left-page div:nth-child(4),
-  #left-page div:nth-child(5),
-  #left-page div:nth-child(6){
-    width: 90%;
-    padding:5px 0;
-    margin:10px 0;
-  }
-
-#left-page div:nth-child(6) a {
-    color: rgb(255, 150, 100);
-    border: 0.2px solid rgb(255, 150, 100);
-}
-
-  #left-page .icon {
-    font-size: 1.3em;
-  }
-
-  .menu a {
-    display: flex;
-    align-items: center;
-    padding-left: 35px;
-  }
-
-  .menu a i {
-    margin-right: 5px;
-    vertical-align: middle;
-  }
-
-  #right-page {
-    background-color: #fdf7ea;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow-y: auto;
-  }
-
   .card-text {
     font-family: "Open Sans";
     font-size: 0.8em;
   }
 
   .quantities:disabled {
-    background-color: #fff; /* or transparent */
+    background-color: #fff;
     opacity: 1;
   }
 

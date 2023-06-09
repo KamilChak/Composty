@@ -25,7 +25,7 @@ def composterSignup(request):
     if request.method == 'POST':
         form = ComposterForm(request.POST)
         if form.is_valid():
-            # do something with the cleaned form data
+
             organization_name = form.cleaned_data['OrganizationName']
             community_name = form.cleaned_data['CommunityName']
             email = form.cleaned_data['Email']
@@ -33,7 +33,6 @@ def composterSignup(request):
             phone_number = form.cleaned_data['PhoneNumber']
             location = form.cleaned_data['Location']
             
-            # create a new Composter object with the cleaned form data
             composter = Composter.objects.create(OrganizationName=organization_name, CommunityName=community_name, Email=email, password=password, PhoneNumber=phone_number, Location=location)
 
             blockchain = Blockchain()
@@ -41,12 +40,12 @@ def composterSignup(request):
             user_url = request.build_absolute_uri('/')[:-1]
             blockchain.add_node(user_url, composter)
             
-            # redirect to the success page
-            return redirect('/')  # or any other success page
+            return redirect('/')
     else:
         form = ComposterForm()
 
     return render(request, 'Composter_signup.html', {'form': form})
+
 
 
 def composterLogin(request):
@@ -56,24 +55,29 @@ def composterLogin(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
 
-            # Authenticate the user using my custom backend
             user = authenticate(request=request, email=email, password=password, backend=ComposterAuthBackend())
 
             if user is not None:
                 if isinstance(user, Greener):
-                    # Reject the login attempt if the user is a Greener
                     messages.error(request, 'Invalid email or password.')
                 else:
-                    # Authenticate the user and redirect to the home page
                     login(request, user)
                     return redirect('composterHome')
             else:
-                # Authentication failed, show an error message
                 messages.error(request, 'Invalid email or password.')
+
+        remember_me = request.POST.get('remember')
+
+        if remember_me:
+            request.session.set_expiry(604800)
+        else:
+            request.session.set_expiry(0)
+
     else:
         form = ComposterLoginForm()
 
     return render(request, 'Composter_login.html', {'form': form})
+
 
 
 @login_required
@@ -97,10 +101,6 @@ def composterHome(request):
         return redirect('composterHome')
 
 
-@login_required
-def composterCalendar(request):
-    return render(request, 'composter_calendar.html')
-
 
 @login_required
 def composterGreenersRequest(request):
@@ -110,6 +110,7 @@ def composterGreenersRequest(request):
         'offers': offers
     }
     return render(request, 'greeners_request.html', context)
+
 
 
 @login_required
@@ -150,6 +151,7 @@ def decline_offer(request, offer_id):
     return redirect('composterGreenersRequest')
 
 
+
 @login_required
 def GreenersOffers(request):
     offers = Offer.objects.filter(sender__composter=request.user, Status='pending').select_related('sender').values('sender_id', 'sender__FirstName', 'sender__LastName', 'sender__Location').annotate(
@@ -177,11 +179,13 @@ def GreenersOffers(request):
     return JsonResponse({'GreenersOffersJson': GreenersOffersJson})
 
 
+
 @login_required
 def getPendingMembers(request):
     greeners = Greener.objects.filter(composter=request.user, ComposterStatus='waiting')
     context = {'greenersArray': greeners}
     return render(request, 'pending_members.html', context)
+
 
 
 @csrf_exempt
@@ -195,12 +199,12 @@ def acceptGreener(request):
             greener.ComposterStatus = 'accepted'
             greener.save()
 
-            # Create a notification for the greener
             notification_message = "Congratulations! You have been accepted to "+ request.user.CommunityName +"community."
             GreenerNotifications.objects.create(greener=greener, Message=notification_message)
 
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'})
+
 
 
 @csrf_exempt
@@ -214,8 +218,7 @@ def rejectGreener(request):
             greener.composter = None
             greener.save()
 
-             # Create a notification for the greener
-            notification_message = "Unfortunately, your request to Community: " + request.user.CommunityName + "has been rejected !"
+            notification_message = "Unfortunately, your request to Community: " + request.user.CommunityName + " has been rejected !"
             GreenerNotifications.objects.create(greener=greener, Message=notification_message)
             
             return JsonResponse({'status':'ok'})
@@ -230,8 +233,8 @@ def getGreenersOffer(request):
     for offer in offers:
         offersArray.append({
             'offerid' : offer.id,
-            'Greener': offer.sender,  # Use `offer` instead of `Greener`
-            'manure': offer.manure,  # Use `offer` instead of `CompostOffer`
+            'Greener': offer.sender,
+            'manure': offer.manure,
             'brown_material': offer.brown_material,
             'green_material': offer.green_material,
             'date_range_start': offer.date_range_start,
@@ -249,6 +252,19 @@ def getComposterMembers(request):
     return render(request, 'Composter_members.html', context)
 
 
+@login_required
+def removeComposterMember(request, member_id):
+    member = get_object_or_404(Greener, pk=member_id)
+    member.composter = None
+    member.ComposterStatus = 'waiting'
+    member.save()
+
+    notification_message = "Unfortunately, you were kicked out from the community: " + request.user.CommunityName
+    GreenerNotifications.objects.create(greener=member, Message=notification_message)
+    
+    return redirect('getComposterMembers')
+
+
 def logoff(request):
     logout(request)
     return redirect('index')
@@ -260,7 +276,6 @@ def checkEmail(request):
         email = data.get("email")
         print(email)
 
-        # Check if email exists in the Greener table
         exists = Composter.objects.filter(Email=email).exists()
         print(exists)
 

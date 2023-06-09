@@ -2,94 +2,34 @@
 
 {% load static %}
 
-
-{% block title %}Home{% endblock %}
+{% block title %}Link your Account{% endblock %}
 
 {% block content %}
 
-
 <style>
-    #left-side {
-        height: 100vh;
-    }
+.leaflet-control-zoom-in:before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  content: '+';
+}
 
+.leaflet-control-zoom-out:before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  content: '-';
+}
 
-    #right-side {
-        background-color: #B6A885;
-        height: 100vh;
-    }
-
-
-    #left-side h1 {
-        font-family: 'Open Sans';
-        font-weight: 800;
-        font-size: 3.2em;
-    }
-
-    #left-side h2 {
-        font-family: 'Open Sans';
-        font-weight: 800;
-    }
-
-    #left-side #menu {
-        width: 48px;
-        color: black;
-    }
-
-
-
-
-    .col-7 h2 {
-        font-family: 'Open Sans';
-        color: white;
-    }
-
-    .nav-link {
-        margin: 10px 0px;
-        width: 100%;
-      }
-    
-      .nav-link a {
-        text-decoration: none;
-        color: black;
-      }
-    
-      #greener-menu {
-        width: 250px;
-      }
-    
-      #offcanvasExampleLabel .icon {
-        font-size: 1.7em;
-      }
-    
-      .offcanvas-body a {
-        color: black;
-        font-weight: bold;
-      }
-    
-      .offcanvas-body a {
-        color: black;
-        font-size: 1.2em;
-        margin-right: 10px;
-      }
-    
-      .offcanvas-body a .icon {
-        color: black;
-        font-size: 1.7em;
-        margin-right: 10px;
-      }
-    
-      .offcanvas-body .nav-link {
-        height: 60px;
-        border-radius: 8px;
-      }
-    
-      .offcanvas-body .nav-link:hover {
-        background-color: #16a301;
-        border-radius: 8px;
-        color: white;
-      }
+.leaflet-control-zoom a span {
+  display: none;
+}
 </style>
+
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
@@ -97,181 +37,170 @@
 
 <div class="fluid-container">
 
-    
+  <div class="row">
+
+    <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu" id="left-page">
+
+      <div class="logo">
+        <img src="{% static 'images/composter_logo.svg' %}"/>
+      </div>
+  
+      <div>
+        <a href="{% url 'greenerHome' %}"><i class="bi bi-house"></i>Dashboard</a>
+      </div>
+  
+      <div>
+        <a href="{% url 'greenerNotification' %}">
+          <i class="bi bi-bell"></i>Notifications<span class="badge bg-danger">{{notif}}</span>
+        </a>
+      </div>
+  
+      <div>
+        <a href="#"><i class="bi bi-arrow-right-square"></i>Submit Compost</a>
+      </div>
+  
+      <div>
+        <a href="#"><i class="bi bi-book"></i>View History</a>
+      </div>
+  
+      <div class="mt-5">
+        <a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a>
+      </div>
+        
+    </div>
 
 
-    <div class="row">
+    <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
 
-        <div class="col-12" id="left-side">
-            <div class="d-flex justify-content-start align-items-center " style="padding-left:10px; padding-top:10px;">
-              <div><img id="menu" data-bs-toggle="offcanvas" href="#greener-menu" src="{% static 'images/menu-logo.svg' %}"></div>
-              <div class="ms-2" id="menu-text">Menu</div>
-            </div>
-
-
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <h4 class="text-center mb-5">Choose your composter from the map by double click</h4>
-             
-              <div class="mb-4">
-                <label for="radius">Search radius (Km):</label>
-              <input type="number" id="radius" name="radius" value="10">
-              <button id="search-btn">Search</button>
-            </div>
-              <div id="map" style="height: 500px; width:50%"></div>
-              <div class="d-flex flex-column">
-                <div>Your current request: </div>
-                <div>Organization name: {{user.composter.OrganizationName}}</div>
-                <div>Community name: {{user.composter.CommunityName}}</div>
-                <div>Phone : {{user.composter.PhoneNumber}}</div>
-              </div>
-              
-            </div>
-
-              <input type="hidden" id="composter">
-              <input type="hidden" id="greener" value="{{ user.id }}">
-              <button id="change-composter-btn" style="width: fit-content;">Change composter</button>
-
-
-          <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="greener-menu" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title d-flex align-items-center" id="offcanvasExampleLabel"><i class='icon bx bxs-grid' ></i>Menu</h5>
-              <button type="button" class="btn-close d-flex align-items-center" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <nav class="nav flex-column d-flex justify-content-center align-items-center">
-                <p>You need to link your account first to see further Services</p>
-                <a class="nav-link d-flex align-items-center" href="{% url 'logoff' %}">
-                  <i class='icon bx bxs-log-out''></i> 
-                  Logout
-                </a>
-              </nav>
-            </div>
-          </div>
-
-
+      <div class="d-flex flex-column justify-content-center align-items-center">
+        <h4 class="text-center mb-5">Choose your Composter from the Map</h4>
+        <div class="mb-4 fw-bold">
+          <label for="radius">Search by Radius (Km):</label>
+          <input type="number" id="radius" name="radius" value="10">
+          <button id="search-btn">Search</button>
         </div>
 
+        <div id="map" style="height: 500px; width:950px;"></div>
+              
+      </div>
+
+      <input type="hidden" id="composter">
+      <input type="hidden" id="greener" value="{{ user.id }}">
+      <button id="change-composter-btn" style="width: fit-content;">Change composter</button>
 
     </div>
-    <script>
 
-      var map = L.map('map', {
-        doubleClickZoom: false
-      }).setView([35.690274, 9.480218], 7);
-      
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-      
+  </div>
 
-      let userLocationMarker;
-      let markers = [];
+</div>
 
+<script>
+
+  var map = L.map('map', {
+    doubleClickZoom: false
+  }).setView([35.690274, 9.480218], 7);
   
-      function getClosestComposters(radius, URLUserLocation) {
-        // Remove the user location marker if it exists
-        if (userLocationMarker) {
-          userLocationMarker.remove();
-        }
-      
-        // Remove all composting site markers
-        markers.forEach(marker => marker.remove());
-        markers = [];
-      
-        // Create marker for user location
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  
 
-      
-        // Add marker for user location
-        let userLatLng = parseLatLng(URLUserLocation);
-        userLocationMarker = L.marker(parseLatLng(URLUserLocation), {
-          icon: L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-          })
-        }).addTo(map);
-        userLocationMarker.bindPopup('Your location');
-        markers.push(userLocationMarker);
-      
-        // Fetch closest composters and add markers for each site
-        fetch(`/Greener/get_closest_composters/?UserLocation=${URLUserLocation}&Radius=${radius}`)
-          .then(response => response.json())
-          .then(data => {
-            // Handle the returned data here
-            console.log(data.closest_composters);
-      
-            // Add markers to map for each composting site
-            data.closest_composters.forEach(composter => {
-              let lat = parseFloat(composter.LocationY);
-              let lng = parseFloat(composter.LocationX);
-              let name = composter.OrganizationName;
-              let community = composter.CommunityName;
-              let distance = composter.distance.toFixed(2);
-              let composterID = composter.id;
-      
-              let marker = L.marker([lat, lng]).addTo(map);
-              marker.bindPopup(`<b>Organization name: ${name}</b><br>Community name: ${community}<br>Distance: ${distance} m`);
-      
-              marker.on('click', () => {
-                document.getElementById('composter').value = composterID;
-              });
-      
-              markers.push(marker);
-            });
-          })
-          .catch(error => {
-            console.log(error);
+  let userLocationMarker;
+  let markers = [];
+
+
+  function getClosestComposters(radius, URLUserLocation) {
+    if (userLocationMarker) {
+      userLocationMarker.remove();
+    }
+  
+    markers.forEach(marker => marker.remove());
+    markers = [];
+  
+
+    let userLatLng = parseLatLng(URLUserLocation);
+    userLocationMarker = L.marker(parseLatLng(URLUserLocation), {
+      icon: L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      })
+    }).addTo(map);
+    userLocationMarker.bindPopup('Your location');
+    markers.push(userLocationMarker);
+  
+    fetch(`/Greener/get_closest_composters/?UserLocation=${URLUserLocation}&Radius=${radius}`)
+      .then(response => response.json())
+      .then(data => {
+        
+        console.log(data.closest_composters);
+  
+        data.closest_composters.forEach(composter => {
+          let lat = parseFloat(composter.LocationY);
+          let lng = parseFloat(composter.LocationX);
+          let name = composter.OrganizationName;
+          let community = composter.CommunityName;
+          let distance = composter.distance.toFixed(2);
+          let composterID = composter.id;
+  
+          let marker = L.marker([lat, lng]).addTo(map);
+          marker.bindPopup(`<b>Organization name: ${name}</b><br>Community name: ${community}<br>Distance: ${distance} m`);
+  
+          marker.on('click', () => {
+            document.getElementById('composter').value = composterID;
           });
-      }
   
-        document.getElementById('search-btn').addEventListener('click', () => {
-          let radius = document.getElementById('radius').value;
-          let URLUserLocation = '{{ user.Location }}';
-          getClosestComposters(radius, URLUserLocation);
-      });
-      
-      function parseLatLng(wktPoint) {
-          // Parse the WKT point string to extract the coordinates
-          let match = wktPoint.match(/\((.*?)\)/);
-          let coords = match[1].split(' ');
-          let lat = parseFloat(coords[1]);
-          let lng = parseFloat(coords[0]);
-          return [lat, lng];
-      }
-
-
-
-      const changeComposterBtn = document.getElementById('change-composter-btn');
-
-      changeComposterBtn.addEventListener('click', () => {
-        const composterId = document.getElementById('composter').value;
-        const greenerId = document.getElementById('greener').value;
-        fetch('/Greener/update_composter/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}',
-          },
-          body: JSON.stringify({
-            composterId: composterId,
-            greenerId: greenerId
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          // handle response data
-        })
-        .catch(error => {
-          console.error(error);
-          // handle error
+          markers.push(marker);
         });
       })
-        
+      .catch(error => {
+        console.log(error);
+      });
+  }
 
-
-    </script>
+    document.getElementById('search-btn').addEventListener('click', () => {
+      let radius = document.getElementById('radius').value;
+      let URLUserLocation = '{{ user.Location }}';
+      getClosestComposters(radius, URLUserLocation);
+  });
+  
+  function parseLatLng(wktPoint) {
     
-    {% endblock %}
+      let match = wktPoint.match(/\((.*?)\)/);
+      let coords = match[1].split(' ');
+      let lat = parseFloat(coords[1]);
+      let lng = parseFloat(coords[0]);
+      return [lat, lng];
+  }
+
+
+  const changeComposterBtn = document.getElementById('change-composter-btn');
+
+  changeComposterBtn.addEventListener('click', () => {
+    const composterId = document.getElementById('composter').value;
+    const greenerId = document.getElementById('greener').value;
+    fetch('/Greener/update_composter/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify({
+        composterId: composterId,
+        greenerId: greenerId
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  })
+
+</script>
+    
+{% endblock %}

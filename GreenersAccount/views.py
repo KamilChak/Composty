@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 import json
 from Blockchain.models import Transaction
 from Blockchain.views import Blockchain
@@ -13,7 +13,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from CompostItem.models import Compost
 from django.views.decorators.csrf import csrf_exempt
 
-#libraries for auth
+
 from django.contrib.auth.hashers import make_password
 from .backends import GreenerAuthBackend
 from django.contrib.auth import authenticate, login
@@ -22,13 +22,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 
-# Create your views here.
 
 def greenerSignup(request):
     if request.method == 'POST':
         form = GreenerForm(request.POST)
         if form.is_valid():
-            # do something with the cleaned form data
+
             first_name = form.cleaned_data['FirstName']
             last_name = form.cleaned_data['LastName']
             email = form.cleaned_data['Email']
@@ -37,7 +36,6 @@ def greenerSignup(request):
             location = form.cleaned_data['Location']
             composterObject = form.cleaned_data['composter']           
              
-            # create a new Greener object with the cleaned form data
             greener = Greener.objects.create(FirstName=first_name, LastName=last_name, Email=email, password=password, PhoneNumber=phone_number, Location = location, composter = composterObject)
 
             blockchain = Blockchain()
@@ -45,14 +43,12 @@ def greenerSignup(request):
             user_url = request.build_absolute_uri('/')[:-1]
             blockchain.add_node(user_url, greener)
             
-            # redirect to the success page
-            return redirect('/')  # or any other success page
+            return redirect('/')
     else:
         form = GreenerForm()
 
     return render(request,'Greener_signup.html',{'form': form})
 
-#----------------------------------------------------------------------#
 
 def greenerLogin(request):
     if request.method == 'POST':
@@ -61,48 +57,52 @@ def greenerLogin(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
 
-            # Authenticate the user using my custom backend
             user = authenticate(request=request, email=email, password=password, backend=GreenerAuthBackend())
 
             if user is not None:
                 if isinstance(user, Composter):
-                    # Reject the login attempt if the user is a Greener
                     messages.error(request, 'Invalid email or password.')
                 else:
-                    # Authenticate the user and redirect to the home page
                     login(request, user)
                     if request.user.ComposterStatus == 'waiting':
                         return redirect('greenerHomeChooseComposter')
                     else:
                         return redirect('greenerHome')
             else:
-                # Authentication failed, show an error message
                 messages.error(request, 'Invalid email or password.')
+
+        remember_me = request.POST.get('remember')
+
+        if remember_me:
+            request.session.set_expiry(604800)
+        else:
+            request.session.set_expiry(0)
+            
     else:
         form = GreenerLoginForm()
 
     return render(request, 'Greener_login.html', {'form': form} )
 
-#-----------------------------------------------------------------------#
-
 
 @login_required
 def greenerHome(request):
     
-    user = request.user
-    transactions = Transaction.objects.filter(recipient=user)
+    if request.user.ComposterStatus == 'waiting':
+        return redirect('greenerHomeChooseComposter')
+    
+    else:
+        user = request.user
+    
+        transactions = Transaction.objects.filter(recipient=user)
 
-    notif = GreenerNotifications.objects.filter(greener=user).count()
+        notif = GreenerNotifications.objects.filter(greener=request.user).count()
 
-    context = {
+        context = {
             'user': user,
             'transactions': transactions,
             'notif': notif,
             }
-    return render(request, 'Greener_home.html', context)
-
-
-#----------------------------API during signup for picking up the closest compster-------------------------------------------#
+        return render(request, 'Greener_home.html', context)
 
 
 def getClosestComposters(request):
@@ -148,9 +148,8 @@ def compostOffer(request):
     else:
         form = CompostOfferForm()
 
-    user = request.user
 
-    notif = GreenerNotifications.objects.filter(greener=user).count()
+    notif = GreenerNotifications.objects.filter(greener=request.user).count()
 
     composts = Compost.objects.all()
     context = {'composts': composts,
@@ -188,17 +187,18 @@ def greenerHomeChooseComposter(request):
     if request.user.ComposterStatus == 'accepted':
         return redirect('greenerHome')
     else:
-        return render(request, 'Greener_home_choose_composter.html')
+        notif = GreenerNotifications.objects.filter(greener=request.user).count()
+        return render(request, 'Greener_home_choose_composter.html', {'notif': notif})
     
 
 
 @login_required
 def greenerRequestComposterLink(request):
-    context = {'user' : request.user}
     if request.user.ComposterStatus == 'accepted':
         return redirect('greenerHome')
     else:
-        return render(request, 'Greener_request_composter_link.html', context)
+        notif = GreenerNotifications.objects.filter(greener=request.user).count()
+        return render(request, 'Greener_request_composter_link.html', {'user' : request.user, 'notif': notif})
     
 
 
@@ -221,9 +221,26 @@ def updateComposter(request):
 @login_required
 def greenerNotification(request):
     notifications = GreenerNotifications.objects.filter(greener__id=request.user.id).order_by('-Timestamp')
-    context = {'notificationsArray': notifications}
+
+    notif = GreenerNotifications.objects.filter(greener=request.user).count()
+
+    if request.user.ComposterStatus == 'waiting':
+        disabled = True
+
+    context = {
+        'notificationsArray': notifications, 
+        'notif': notif,
+        'disabled': disabled,
+    }
 
     return render(request, 'Greener_notification.html', context)
+
+
+@login_required
+def deleteNotification(request, notif_id):
+    notif = get_object_or_404(GreenerNotifications, pk=notif_id)
+    notif.delete()
+    return redirect('greenerNotification')
 
 
 def checkEmail(request):
@@ -232,7 +249,6 @@ def checkEmail(request):
         email = data.get("email")
         print(email)
 
-        # Check if email exists in the Greener table
         exists = Greener.objects.filter(Email=email).exists()
         print(exists)
 

@@ -36,27 +36,27 @@ def adminUI(request):
     transactionsT = Transaction.objects.count()
     offersT = Offer.objects.count()
 
-    today = datetime.today()
+    date = datetime.today()
     #transactions filtered by date
-    today_transactions = Transaction.objects.filter(timestamp__date=today)
+    today_transactions = Transaction.objects.filter(timestamp__date=date)
 
-    yesterday = today - timedelta(days=1)
+    yesterday = date - timedelta(days=1)
 
     yesterday_transactions = Transaction.objects.filter(timestamp__date=yesterday)
     
-    month_transactions = Transaction.objects.filter(timestamp__month=today.month)
+    month_transactions = Transaction.objects.filter(timestamp__month=date.month)
 
-    year_transactions = Transaction.objects.filter(timestamp__year=today.year)
+    year_transactions = Transaction.objects.filter(timestamp__year=date.year)
 
     #last month t
-    start_of_previous_month = today.replace(day=1) - timedelta(days=1)
-    end_of_previous_month = start_of_previous_month.replace(day=1)
+    end_of_previous_month = date.replace(day=1) - timedelta(days=1)
+    start_of_previous_month = end_of_previous_month.replace(day=1)
 
     last_month_transactions = Transaction.objects.filter(timestamp__date__range=[start_of_previous_month, end_of_previous_month])
     
     #last year t
-    start_of_previous_year = today.replace(month=1, day=1) - timedelta(days=1)
-    end_of_previous_year = start_of_previous_year.replace(month=1, day=1)
+    end_of_previous_year = date.replace(month=1, day=1) - timedelta(days=1)
+    start_of_previous_year = end_of_previous_year.replace(month=1, day=1)
 
     last_year_transactions = Transaction.objects.filter(timestamp__date__range=[start_of_previous_year, end_of_previous_year])
 
@@ -82,7 +82,7 @@ def adminUI(request):
                 p = 0
         else:
             p = (x / y) * 100
-        return p
+        return "{:.2f}".format(p)
     
 
     today_yest_P = calculateP(daily_total, yesterday_total)

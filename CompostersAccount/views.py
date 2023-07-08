@@ -276,7 +276,7 @@ def checkEmail(request):
         email = data.get("email")
         print(email)
 
-        exists = Composter.objects.filter(Email=email).exists()
+        exists = Composter.objects.filter(Email=email).exists() or Greener.objects.filter(Email=email).exists()
         print(exists)
 
         return JsonResponse({'exists': exists})

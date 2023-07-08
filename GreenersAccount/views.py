@@ -168,9 +168,15 @@ def sentRequests(request):
 
     notif = GreenerNotifications.objects.filter(greener=user).count()
 
+    disabled = False
+    
+    if request.user.ComposterStatus == 'waiting':
+        disabled = True
+
     context = {
         'offers': offers,
         'notif': notif,
+        'disabled': disabled,
     }
     return render(request, 'greeners_requests.html', context)
 
@@ -224,6 +230,8 @@ def greenerNotification(request):
 
     notif = GreenerNotifications.objects.filter(greener=request.user).count()
 
+    disabled = False
+
     if request.user.ComposterStatus == 'waiting':
         disabled = True
 
@@ -249,7 +257,7 @@ def checkEmail(request):
         email = data.get("email")
         print(email)
 
-        exists = Greener.objects.filter(Email=email).exists()
+        exists = Greener.objects.filter(Email=email).exists() or Composter.objects.filter(Email=email).exists()
         print(exists)
 
         return JsonResponse({'exists': exists})

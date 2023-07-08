@@ -30,7 +30,7 @@
             </div>
       
             <div>
-              <a href="{% if disabled %}#{% else %}{% url 'sentRequests' %}{% endif %}"><i class="bi bi-book"></i>View History</a>
+              <a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a>
             </div>
       
             <div class="mt-5">
@@ -41,17 +41,26 @@
         
         <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center" id="right-page">
 
+          {% if notificationsArray %}
             {% for notification in notificationsArray %}
-            <div class="card mb-3">
-                <div class="card-header fw-bold mb-2" style="width: 550px;">
-                {{ notification.Timestamp }}
+              <div class="card mb-3">
+                  <div class="card-header fw-bold mb-2" style="width: 550px;">
+                      {{ notification.Timestamp }}
+                  </div>
+                  <div class="card-body">
+                      <p class="card-text fw-bold">{{ notification.Message }}</p>
+                      <a href="{% url 'deleteNotification' notification.id %}" class="btn btn-primary">Mark as read</a>
+                  </div>
                 </div>
+            {% endfor %}
+
+          {% else %}
+            <div class="card mb-3">
                 <div class="card-body">
-                <p class="card-text fw-bold">{{ notification.Message }}</p>
-                <a href="{% url 'deleteNotification' notification.id %}" class="btn btn-primary">Mark as read</a>
+                    <p class="card-text">No notifications found.</p>
                 </div>
             </div>
-            {% endfor %}
+          {% endif %}
 
         </div>
 

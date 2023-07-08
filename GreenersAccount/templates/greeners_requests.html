@@ -17,7 +17,7 @@
                     <i class="bi bi-bell"></i>Notifications<span class="badge bg-danger">{{notif}}</span>
                 </a>
               </div>
-            <div class="c-greeners-submit"><a href="{% url 'compostOffer' %}"><i class='bi bi-arrow-right-square'></i>Submit Compost</a></div>
+            <div class="c-greeners-submit"><a href="{% if disabled %}#{% else %}{% url 'compostOffer' %}{% endif %}"><i class='bi bi-arrow-right-square'></i>Submit Compost</a></div>
             <div class="c-greeners-request"><a href="{% url 'sentRequests' %}"><i class="bi bi-book"></i>View History</a></div>
             <div class="mt-5"><a href="{% url 'logoff' %}"><i class="bi bi-door-open"></i>Logout</a></div>
             
@@ -39,6 +39,7 @@
                             <div class="col">Confirmation</div>
                         </div>
                     </li>
+                    {% if offers %}
                     {% for offer in offers %}
                         <li class="list-group-item">
                             <div class="row">
@@ -59,12 +60,37 @@
                             </div>
                         </li>
                     {% endfor %}
+                    {% else %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">No offers found.</p>
+                        </div>
+                    </div>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
-<script></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var anchors = document.querySelectorAll(".disabled-anchor");
+    var errorMessageElements = document.querySelectorAll(".errorMessage");
+
+    anchors.forEach(function(anchor) {
+      anchor.addEventListener("click", function(event) {
+
+        errorMessageElements.forEach(function(errorMessageElement) {
+          errorMessageElement.style.display = "none";
+        });
+
+        var errorMessageElement = this.nextElementSibling;
+        errorMessageElement.innerText = "You need to be linked to a composter";
+        errorMessageElement.style.display = "inline";
+      });
+    });
+  });
+</script>
 
 {% endblock %}

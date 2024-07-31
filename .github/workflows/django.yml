@@ -50,7 +50,7 @@ jobs:
     - name: Set up PostgreSQL
       run: |
         sudo apt-get install -y postgresql-client
-        psql -h localhost -U postgres -d Composty -c "CREATE EXTENSION postgis;"
+        psql -h localhost -U postgres -d Composty -c "CREATE EXTENSION IF NOT EXISTS postgis;"
       env:
         PGPASSWORD: admin
     - name: Run Tests

@@ -16,6 +16,21 @@ jobs:
       matrix:
         python-version: [3.9]
 
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: Composty
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -28,8 +43,18 @@ jobs:
         sudo apt-get install -y gdal-bin libgdal-dev
     - name: Install Dependencies
       run: |
+        export CPLUS_INCLUDE_PATH=/usr/include/gdal
+        export C_INCLUDE_PATH=/usr/include/gdal
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Set up PostgreSQL
+      run: |
+        sudo apt-get install -y postgresql-client
+        psql -h localhost -U postgres -d composty_db -c "CREATE EXTENSION postgis;"
+      env:
+        PGPASSWORD: postgres
     - name: Run Tests
+      env:
+        DATABASE_URL: postgres://postgres:admin@localhost:5432/Composty
       run: |
         python manage.py test
